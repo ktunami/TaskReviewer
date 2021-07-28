@@ -6,6 +6,7 @@
 	<script src="http://www.ehsy.com/mall/view/plugins/jquery/jquery-3.1.1.min.js"></script>
 </head>
 <body>
+    <div class="main">
     <h1> 欢迎使用TaskReviewer </h1>
     <p class="date"> 今天是 {{ date }} {{ week_day }}</p>
     <div id="total_progress" class="task">
@@ -15,17 +16,15 @@
                 <th>ID</th>
                 <th>名称</th>
                 <th>已学次数</th>
-                <th>上次结束</th>
                 <th>本次开始</th>
-                <th>进度条</th>
+                <th>进度(百分比)</th>
             </tr>
             {% for item in all_tasks %}
             <tr>
                 <td class="num"></td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.learned_times }}</td>
-                <td>{{ item.last_time }}</td>
-                <td>{{ item.next_begin_time }}</td>
+                <td class="time" time="{{ item.next_begin_time }}">{{ item.next_begin_time }}</td>
                 <td>{{ item.progress }}</td>
             </tr>
             {% endfor %}
@@ -35,9 +34,8 @@
     <div id="review_yesterday" class="task">
         {% if review_yesterday %}
             <form method="POST" action="{{ url_for('review_process') }}" >
-                <p class="hd">昨日新学内容复习：</p>
+                <p class="hd">昨日新学内容复习：<button type="submit" class="btn">提交</button> </p>
                 <table border="1">
-                    <input type="submit" value="提交">
                     <tr>
                         <th>序号</th>
                         <th>总任务名称</th>
@@ -64,8 +62,8 @@
     </div>
 
     <div id="new_learned" class="task">
-        <p class="hd">今日新学内容输入：</p>
-        <form method="POST" action="{{ url_for('new_learn_process') }}" >
+        <form method="POST" action="{{ url_for('new_learn_process') }}" onsubmit="return submitNew()">
+        <p class="hd">今日新学内容输入： <input type="submit" class="btn" value="提交"> </p>
             <table border="1">
                 <tr>
                     <th>序号</th>
@@ -78,7 +76,7 @@
                     <tr>
                         <td class="num"></td>
                         <td>
-                            <select name="total_task_id"  class="ipt">
+                            <select name="total_task_id"  class="ipt select">
                                 <option value="0" > 其它: </option>
                                 {% for item in all_tasks %}
                                 <option value="{{ item.id }}" >{{ item.name }}</option>
@@ -87,18 +85,17 @@
                         </td>
                         <td><input type="text" class="ipt" name="other_total_task_name"></td>
                         <td><input type="text" class="ipt" name="sub_task_name"></td>
-                        <td><input type="text" class="ipt" name="progress"></td>
+                        <td><input type="text" class="ipt ipt2" name="progress"></td>
                         <td><button type="button" class="btn btn-del">移除</button></td>
                     </tr>
                 </tbody>
             </table>
-            <input type="submit" value="提交">
         </form>
 		<script type="text/template" id="add_tpl">
             <tr>
                 <td class="num"></td>
                 <td>
-                    <select name="total_task_id"  class="ipt">
+                    <select name="total_task_id"  class="ipt select">
                         <option value="0" > 其它: </option>
                         {% for item in all_tasks %}
                         <option value="{{ item.id }}" >{{ item.name }}</option>
@@ -107,19 +104,18 @@
                 </td>
                 <td><input type="text" class="ipt" name="other_total_task_name"></td>
                 <td><input type="text" class="ipt" name="sub_task_name"></td>
-                <td><input type="text" class="ipt" name="progress"></td>
+                <td><input type="text" class="ipt ipt2" name="progress"></td>
                 <td><button type="button" class="btn btn-del">移除</button></td>
             </tr>
 		</script>
 		<button type="button" class="btn btn-add mt5">+添加</button>
     </div>
 
-    <div id="display_new_learned" >
+    <div id="display_new_learned" class="task">
         {% if today_learned %}
-            <p>今日已学习内容(请于当日及时复习)</p>
             <form method="POST" action="{{ url_for('new_learn_for_review') }}" >
+            <p class="hd">今日已学习内容(请于当日及时复习)  <input type="submit" class="btn" value="提交"></p>
                 <table border="1">
-                    <input type="submit" value="提交11">
                     <tr>
                         <th>序号</th>
                         <th>总任务名称</th>
@@ -139,12 +135,11 @@
         {% endif %}
     </div>
 
-    <div id="review_others">
+    <div id="review_others" class="task">
        {% if other_need_review %}
             <form method="POST" action="{{ url_for('review_process') }}" >
-                <p class="hd">之前需要复习的内容：</p>
+                <p class="hd">之前需要复习的内容：<button type="submit" class="btn" >提交</button></p>
                 <table border="1">
-                     <input type="submit" value="提交">
                     <tr>
                         <th>序号</th>
                         <th>总任务名称</th>
@@ -169,20 +164,46 @@
             <p class="hd"> ~~~都复习完啦~~~ </p>
          {% endif %}
     </div>
-
+    </div>
 </body>
 <script>
 $(function(){
+    var timestamp = Date.parse(new Date());
+    $('.time').each(function () {
+        var time_str = $(this).attr('time');
+        var cur_time = new Date(time_str).getTime();
+        var pro = parseInt($(this).next().text());
+        if (cur_time <= timestamp && pro != 0) {
+            $(this).parent().addClass('bg_yellow');
+        } else if(cur_time <= timestamp && pro == 0) {
+            $(this).parent().addClass('bg_red');
+        }
+
+    })
 	//新增行
 	$('.btn-add').click(function(){
 		var str = $('#add_tpl').html();
 		$('#add_body').append(str);
 		renderAction();
 		renderNum();
+		renderSelect();
 	})
 	renderAction();
+	renderSelect();
 	renderNum();
 })
+
+function renderSelect() {
+    $('.select').change(function () {
+        if($(this).val() != 0){
+            $(this).parent().next().find('.ipt').attr('disabled','disabled').val('');
+        } else {
+            $(this).parent().next().find('.ipt').removeAttr('disabled').val('');
+        }
+    })
+
+}
+
 //重新渲染删除
 function renderAction() {
 	$('.btn-del').off('click').click(function(){
@@ -199,6 +220,21 @@ function renderNum() {
         })
 	})
 }
+
+function submitNew() {
+    var flag = true;
+    $('.ipt').each(function () {
+        if(!$(this).is(":disabled") && $(this).val() == ''){
+            flag = false;
+        }
+    })
+    if (!flag) {
+        alert('输入内容不能为空哦');
+    }
+    return flag;
+}
+
+
 </script>
 <style>
 * {margin:0;padding:0;box-sizing: border-box;}
@@ -228,7 +264,7 @@ h1 {
 	font-size:16px;
 }
 .task {
-	margin:20px 0 0 0;
+	margin:40px 0 0 0;
 }
 .task .hd {
 	font-size:20px;
@@ -252,13 +288,23 @@ h1 {
 	border:none;
 	background:#009cfa;
 	color:#FFF;
-	padding:6px 15px;
+	padding:5px 15px;
 	border-radius:30px;
 }
 .ipt {
-	width:100px;
+	width:200px;
 	border:1px solid #DDD;
 	padding:2px 5px;
+}
+.ipt2 {
+	width:50px;
+}
+.bg_yellow {
+    background: yellow !important;
+}
+.bg_red {
+    background: red !important;
+    color: white;
 }
 </style>
 </html>
