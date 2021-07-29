@@ -19,7 +19,7 @@ def index():
     all_need_reviews = db.session.query(
         TotalTasks.id, DailyTasks.total_task_id, DailyTasks.id.label("id"),
         TotalTasks.name.label("t_name"), DailyTasks.name, DailyTasks.learned_times,
-        DailyTasks.last_time, DailyTasks.next_begin_time
+        DailyTasks.next_begin_time
     ).filter(and_(DailyTasks.next_begin_time <= current_date,
                   DailyTasks.learned_times < len(app.config.get('REVIEW_RULES')))). \
         filter(TotalTasks.id == DailyTasks.total_task_id).all()
