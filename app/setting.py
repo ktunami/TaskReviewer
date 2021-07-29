@@ -19,7 +19,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # ------------  Other Settings  ------------
 DEBUG = True
-DATABASE_INITION = False                        # Drop and recreate all tables in database
+DATABASE_INITION = True                        # Drop and recreate all tables in database
 REVIEW_RULES = {1:1,                            # Review rules of daily tasks
                 2:1,                               # key -> the ith review
                 3:5,                               # value -> review interval

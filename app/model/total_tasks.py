@@ -7,9 +7,7 @@ class TotalTasks(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200), unique=True)
     learned_times = db.Column(db.Integer, default=0)
-    last_time = db.Column(db.DATE)
     next_begin_time = db.Column(db.DATE)
-    already_begin = db.Column(db.Boolean, default=True)
     progress = db.Column(db.Integer, default=0)
 
     def __init__(self, name, next_begin_time, progress):
