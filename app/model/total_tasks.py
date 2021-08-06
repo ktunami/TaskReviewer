@@ -1,7 +1,13 @@
+# python3
+# _*_ coding: utf-8 _*_
+# @Time  : 2021/7/27
+# @Author: Kate
+# @File  : total_tasks.py
+
 from app import db
 
-class TotalTasks(db.Model):
 
+class TotalTasks(db.Model):
     __tablename__ = 'total_tasks'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -17,4 +23,3 @@ class TotalTasks(db.Model):
 
     def __repr__(self):
         return '<TotalTasks %r>' % self.name
-

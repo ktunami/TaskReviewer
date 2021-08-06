@@ -1,0 +1,211 @@
+{% extends "layout.html" %}
+{% block title %} 待办事项 {% endblock %}
+{% block date %} 欢迎使用TaskReviewer，今天是 {{ date }} {{ week_day }} {% endblock %}
+{% block link1 %}
+    <a href="{{ url_for('index') }}">学习计划(进行中)</a>
+{% endblock %}
+{% block link2 %}
+    <a href="{{ url_for('already_done') }}">学习计划(已完成)</a>
+{% endblock %}
+
+{% block contents %}
+    <div class="task">
+        <form method="POST" id="f1" action="{{ url_for('add_short_items') }}" onsubmit="return submitNewItem('f1')">
+        <p class="hd">添加近期项目： <input type="submit" class="btn" value="提交"> </p>
+            <table border="1">
+                <tr>
+                    <th>序号</th>
+                    <th>名称</th>
+                    <th>资源</th>
+                    <th>备注</th>
+                    <th>需要天数</th>
+                    <th></th>
+                </tr>
+                <tbody class="add_long_item_line">
+                    <tr>
+                        <td class="num"></td>
+                        <td> <input type="text" class="ipt" name="name"> </td>
+                        <td> <input type="text" class="ipt" name="content"> </td>
+                        <td> <input type="text" class="ipt" name="remarks"> </td>
+                        <td> <input type="text" style="width: 50px" name="need_days"> </td>
+                        <td><button type="button" class="btn btn-del">移除</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+		<script type="text/template" id="add_long_item">
+            <tr>
+                <td class="num"></td>
+                <td> <input type="text" class="ipt" name="name"> </td>
+                <td> <input type="text" class="ipt" name="content"> </td>
+                <td> <input type="text" class="ipt" name="remarks"> </td>
+                <td> <input type="text" style="width: 50px" name="need_days"> </td>
+                <td><button type="button" class="btn btn-del">移除</button></td>
+            </tr>
+		</script>
+		<button type="button" class="btn btn-add2 mt5">+添加</button>
+    </div>
+
+    {% if s_term_tasks %}
+    <div class="task">
+        <form method="POST" action="{{ url_for('deal_short_items') }}" >
+            <p class="hd">近期待办
+                <button type="submit" class="btn">保存</button>
+                <button type="button" class="btn all_long_change_btn" >全部修改</button>
+                <button type="button"  class="btn all_long_cancel_btn" style="display: none">全部取消</button>
+            </p>
+            <table border="1">
+            <tr>
+                <th>序号</th>
+                <th>名称</th>
+                <th>资源</th>
+                <th>备注</th>
+                <th>生成日期</th>
+                <th>预计天数</th>
+                <th>完成</th>
+                <th></th>
+            </tr>
+            {% for item in s_term_tasks %}
+            <tbody>
+                <tr>
+                    <td class="num"></td>
+                    <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
+                    {% if item.is_content_link %}
+                        <td>
+                            <a name="content_link" href="{{ item.content }}" style="width: 200px;background-color:#EEE">相关链接</a>
+                            <input class="ipt" disabled type="text" value="{{ item.content }}" name="content" style="display: none">
+                        </td>
+                    {% else %}
+                        <td> <input class="ipt" disabled type="text" name="content" value="{{ item.content }}"> </td>
+                    {% endif %}
+
+                    <td> <input type="text" disabled class="ipt" name="remarks" value="{{ item.remarks }}"> </td>
+
+                    <td> <input type="text" name="create_time" disabled class="ipt_date create_time" value="{{ item.create_date }}" > </td>
+
+                    <td> <input type="text" name="need_days" disabled value="{{ item.expected_days }}"> </td>
+
+                    <td> <input type="checkbox" disabled name="is_end" value="{{ item.id }}" ></td>
+
+                    <td>
+                        <button type="button" class="btn change_btn" >修改</button>
+                        <button type="button" class="btn cancel_btn" style="display: none">取消</button>
+                        <input type="hidden" disabled name="item_id" value="{{ item.id }}"/>
+                    </td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="task">
+        <form method="POST" id="f2" action="{{ url_for('add_long_items') }}" onsubmit="return submitNewItem('f2')">
+        <p class="hd">添加长期项目： <input type="submit" class="btn" value="提交"> </p>
+            <table border="1">
+                <tr>
+                    <th>序号</th>
+                    <th>名称</th>
+                    <th>资源</th>
+                    <th>备注</th>
+                    <th>预计开始</th>
+                    <th>预计结束</th>
+                    <th></th>
+                </tr>
+                <tbody class="add_long_item_line">
+                    <tr>
+                        <td class="num"></td>
+                        <td> <input type="text" class="ipt" name="name"> </td>
+                        <td> <input type="text" class="ipt" name="content"> </td>
+                        <td> <input type="text" class="ipt" name="remarks"> </td>
+                        <td> <input type="text" class="ipt_date" name="expect_begin"> </td>
+                        <td> <input type="text" class="ipt_date" name="expect_end"> </td>
+                        <td><button type="button" class="btn btn-del">移除</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+		<script type="text/template" id="add_long_item">
+            <tr>
+                <td class="num"></td>
+                <td> <input type="text" class="ipt" name="name"> </td>
+                <td> <input type="text" class="ipt" name="content"> </td>
+                <td> <input type="text" class="ipt" name="remarks"> </td>
+                <td> <input type="text" class="ipt_date" name="expect_begin"> </td>
+                <td> <input type="text" class="ipt_date" name="expect_end"> </td>
+                <td><button type="button" class="btn btn-del">移除</button></td>
+            </tr>
+		</script>
+		<button type="button" class="btn btn-add2 mt5">+添加</button>
+    </div>
+
+    {% if l_term_tasks %}
+    <div class="task">
+        <form method="POST" action="{{ url_for('deal_long_items') }}" >
+            <p class="hd">长期项目
+                <button type="submit" class="btn">保存</button>
+                <button type="button" class="btn all_long_change_btn" >全部修改</button>
+                <button type="button"  class="btn all_long_cancel_btn" style="display: none">全部取消</button>
+            </p>
+            <p>没有开始就完成的项目会被删掉（代表该项目被删除）</p>
+            <table border="1">
+            <tr>
+                <th>序号</th>
+                <th>名称</th>
+                <th>资源</th>
+                <th>备注</th>
+                <th>预计开始</th>
+                <th>预计结束</th>
+                <th>开始</th>
+                <th>完成</th>
+                <th></th>
+            </tr>
+            {% for item in l_term_tasks %}
+            <tbody>
+                <tr>
+                    <td class="num"></td>
+                    <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
+                    {% if item.is_content_link %}
+                        <td>
+                            <a name="content_link" href="{{ item.content }}" style="width: 200px;background-color:#EEE">相关链接</a>
+                            <input class="ipt" disabled type="text" value="{{ item.content }}" name="content" style="display: none">
+                        </td>
+                    {% else %}
+                        <td> <input class="ipt" disabled type="text" name="content" value="{{ item.content }}"> </td>
+                    {% endif %}
+
+                    <td> <input type="text" disabled class="ipt" name="remarks" value="{{ item.remarks }}"> </td>
+
+                    {% if item.expected_begin_time %}
+                        <td> <input type="text" name="s_time" disabled class="ipt_date" value="{{ item.expected_begin_time }}"> </td>
+                    {% else %}
+                        <td> <input type="text" name="s_time" disabled class="ipt_date" > </td>
+                    {% endif %}
+
+                    {% if item.expected_end_time %}
+                        <td> <input type="text" name="e_time" disabled class="ipt_date" value="{{ item.expected_end_time }}"> </td>
+                    {% else %}
+                        <td> <input type="text" name="e_time" disabled class="ipt_date" > </td>
+                    {% endif %}
+
+                    {% if item.already_begin %}
+                        <td> <input type="checkbox" disabled name="is_begin" value="{{ item.id }}" checked="checked"></td>
+                    {% else %}
+                        <td> <input type="checkbox" disabled name="is_begin" value="{{ item.id }}" ></td>
+                    {% endif %}
+
+                    <td> <input type="checkbox" disabled name="is_end" value="{{ item.id }}" ></td>
+                    <td>
+                        <button type="button" class="btn change_btn" >修改</button>
+                        <button type="button" class="btn cancel_btn" style="display: none">取消</button>
+                        <input type="hidden" disabled name="item_id" value="{{ item.id }}"/>
+                    </td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+        </form>
+    </div>
+    {% endif %}
+{% endblock %}

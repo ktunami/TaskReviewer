@@ -1,0 +1,100 @@
+* {margin:0;padding:0;box-sizing: border-box;}
+table{border:0;margin:0;border-collapse:collapse;border-spacing:0;}
+body {background:#f5f6f7;color: #000;font:12px/1.5 PingFang SC,"Microsoft Yahei",verdana;text-align:center; }
+a,
+a:link,
+a:visited,
+a:hover,
+a:focus  { text-decoration:none;}
+a:hover{
+	color: green;
+	background: transparent;
+	border-color: #bbb#fff#fff#aaa;
+}
+
+a:focus {outline-style:none; -moz-outline-style: none;}
+.mt5 { margin-top: 5px !important; }
+.main {
+	width:1180px;
+	margin:0 auto;
+	padding:20px 40px;
+	background:#FFF;
+	text-align:left;
+}
+input{
+	width:50px;
+	font-size:12px;
+}
+
+input:disabled {
+	background-color: #EEE;
+	color: #000;
+}
+h1 {
+	text-align:center;
+	font-size:30px;
+	font-weight:bold;
+}
+.all_links{
+	margin-top: 20px;
+	margin-left: 300px;
+}
+.all_links div{
+	margin: 10px 70px;
+	display: inline-block;
+	text-decoration: underline;
+	font-size: 15px;
+}
+.date {
+	text-align:center;
+	font-size:16px;
+}
+.task {
+	margin:40px 0 0 0;
+}
+.task .hd {
+	font-size:20px;
+	margin:0 0 10px;
+	font-weight:bold;
+}
+.task table td,
+.task table th {
+	border:1px solid #999;
+	padding:1px 5px;
+	font-size:14px;
+	text-align:center;
+}
+.task tr:nth-child(even){
+    background:#e1e5e8;
+}
+.task tr:nth-child(odd){
+    background:#fff;
+}
+.btn {
+	border:none;
+	background:#009cfa;
+	color:#FFF;
+	padding:5px 15px;
+	border-radius:30px;
+}
+.ipt {
+	width:180px;
+	border:1px solid #DDD;
+	padding:2px 5px;
+}
+.ipt2 {
+	width:50px;
+	border:1px solid #DDD;
+	padding:2px 5px;
+}
+.ipt_date {
+	width:80px;
+	font-size: 12px;
+}
+.bg_yellow {
+    background: yellow !important;
+}
+.bg_red {
+    background: red !important;
+    color: white;
+}

@@ -1,14 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>欢迎使用TaskReviewer</title>
-	<script src="http://www.ehsy.com/mall/view/plugins/jquery/jquery-3.1.1.min.js"></script>
-</head>
-<body>
-    <div class="main">
-    <h1> 欢迎使用TaskReviewer </h1>
-    <p class="date"> 今天是 {{ date }} {{ week_day }}</p>
+{% extends "layout.html" %}
+{% block title %} 学习计划(进行中) {% endblock %}
+{% block date %} 欢迎使用TaskReviewer，今天是 {{ date }} {{ week_day }} {% endblock %}
+{% block link1 %}
+    <a href="{{ url_for('my_tasks') }}">待办事项</a>
+{% endblock %}
+{% block link2 %}
+    <a href="{{ url_for('already_done') }}">学习计划(已完成)</a>
+{% endblock %}
+
+{% block contents %}
+    {% if all_tasks %}
     <div id="total_progress" class="task">
         <p class="hd">总任务进度：</p>
         <table border="1">
@@ -30,36 +31,35 @@
             {% endfor %}
         </table>
     </div>
+    {% endif %}
 
+    {% if review_yesterday %}
     <div id="review_yesterday" class="task">
-        {% if review_yesterday %}
-            <form method="POST" action="{{ url_for('review_process') }}" >
-                <p class="hd">昨日新学内容复习：<button type="submit" class="btn">提交</button> </p>
-                <table border="1">
-                    <tr>
-                        <th>序号</th>
-                        <th>总任务名称</th>
-                        <th>子任务名称</th>
-                        <th>已复习次数</th>
-                        <th>应复习时间</th>
-                        <th>&nbsp;&nbsp; </th>
-                    </tr>
-                    {% for item in review_yesterday %}
-                    <tr>
-                        <td class="num"></td>
-                        <td>{{ item.t_name }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.learned_times }}</td>
-                        <td>{{ item.next_begin_time }}</td>
-                        <td><input type="checkbox" name="reviewed" value="{{ item.id }}"></td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </form>
-         {% else %}
-            <p class="hd"> ~~~无需要复习的新学内容~~~ </p>
-         {% endif %}
+        <form method="POST" action="{{ url_for('review_process') }}" >
+            <p class="hd">昨日新学内容复习：<button type="submit" class="btn">提交</button> </p>
+            <table border="1">
+                <tr>
+                    <th>序号</th>
+                    <th>总任务名称</th>
+                    <th>子任务名称</th>
+                    <th>已复习次数</th>
+                    <th>应复习时间</th>
+                    <th>&nbsp;&nbsp; </th>
+                </tr>
+                {% for item in review_yesterday %}
+                <tr>
+                    <td class="num"></td>
+                    <td>{{ item.t_name }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.learned_times }}</td>
+                    <td>{{ item.next_begin_time }}</td>
+                    <td><input type="checkbox" name="reviewed" value="{{ item.id }}"></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </form>
     </div>
+    {% endif %}
 
     <div id="new_learned" class="task">
         <form method="POST" action="{{ url_for('new_learn_process') }}" onsubmit="return submitNew()">
@@ -76,7 +76,7 @@
                     <tr>
                         <td class="num"></td>
                         <td>
-                            <select name="total_task_id"  class="ipt select">
+                            <select name="total_task_id"  class="select">
                                 <option value="0" > 其它: </option>
                                 {% for item in all_tasks %}
                                 <option value="{{ item.id }}" >{{ item.name }}</option>
@@ -85,7 +85,7 @@
                         </td>
                         <td><input type="text" class="ipt" name="other_total_task_name"></td>
                         <td><input type="text" class="ipt" name="sub_task_name"></td>
-                        <td><input type="text" class="ipt ipt2" name="progress"></td>
+                        <td><input type="text" class="ipt2" name="progress"></td>
                         <td><button type="button" class="btn btn-del">移除</button></td>
                     </tr>
                 </tbody>
@@ -95,7 +95,7 @@
             <tr>
                 <td class="num"></td>
                 <td>
-                    <select name="total_task_id"  class="ipt select">
+                    <select name="total_task_id"  class="select">
                         <option value="0" > 其它: </option>
                         {% for item in all_tasks %}
                         <option value="{{ item.id }}" >{{ item.name }}</option>
@@ -104,207 +104,64 @@
                 </td>
                 <td><input type="text" class="ipt" name="other_total_task_name"></td>
                 <td><input type="text" class="ipt" name="sub_task_name"></td>
-                <td><input type="text" class="ipt ipt2" name="progress"></td>
+                <td><input type="text" class="ipt2" name="progress"></td>
                 <td><button type="button" class="btn btn-del">移除</button></td>
             </tr>
 		</script>
-		<button type="button" class="btn btn-add mt5">+添加</button>
+		<button type="button" class="btn btn-add1 mt5">+添加</button>
     </div>
 
+    {% if today_learned %}
     <div id="display_new_learned" class="task">
-        {% if today_learned %}
-            <form method="POST" action="{{ url_for('new_learn_for_review') }}" >
-            <p class="hd">今日已学习内容(请于当日及时复习)  <input type="submit" class="btn" value="提交"></p>
-                <table border="1">
-                    <tr>
-                        <th>序号</th>
-                        <th>总任务名称</th>
-                        <th>子任务名称</th>
-                        <th>当日复习</th>
-                    </tr>
-                    {% for item in today_learned %}
-                    <tr>
-                        <td class="num"></td>
-                        <td>{{ item.total_task_name }}</td>
-                        <td>{{ item.name }}</td>
-                        <td><input type="checkbox" name="new_reviewed" value="{{ item.id }}"></td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </form>
-        {% endif %}
+        <form method="POST" action="{{ url_for('new_learn_for_review') }}" >
+        <p class="hd">今日已学习内容(请于当日及时复习)  <input type="submit" class="btn" value="提交"></p>
+            <table border="1">
+                <tr>
+                    <th>序号</th>
+                    <th>总任务名称</th>
+                    <th>子任务名称</th>
+                    <th>当日复习</th>
+                </tr>
+                {% for item in today_learned %}
+                <tr>
+                    <td class="num"></td>
+                    <td>{{ item.total_task_name }}</td>
+                    <td>{{ item.name }}</td>
+                    <td><input type="checkbox" name="new_reviewed" value="{{ item.id }}"></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </form>
     </div>
+    {% endif %}
 
+    {% if other_need_review %}
     <div id="review_others" class="task">
-       {% if other_need_review %}
-            <form method="POST" action="{{ url_for('review_process') }}" >
-                <p class="hd">之前需要复习的内容：<button type="submit" class="btn" >提交</button></p>
-                <table border="1">
-                    <tr>
-                        <th>序号</th>
-                        <th>总任务名称</th>
-                        <th>子任务名称</th>
-                        <th>已复习次数</th>
-                        <th>应复习时间</th>
-                        <th>&nbsp;&nbsp; </th>
-                    </tr>
-                    {% for item in other_need_review %}
-                    <tr>
-                        <td class="num"></td>
-                        <td>{{ item.t_name }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.learned_times }}</td>
-                        <td>{{ item.next_begin_time }}</td>
-                        <td><input type="checkbox" name="reviewed" value="{{ item.id }}"></td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </form>
-         {% else %}
-            <p class="hd"> ~~~都复习完啦~~~ </p>
-         {% endif %}
+        <form method="POST" action="{{ url_for('review_process') }}" >
+            <p class="hd">之前需要复习的内容：<button type="submit" class="btn" >提交</button></p>
+            <table border="1">
+                <tr>
+                    <th>序号</th>
+                    <th>总任务名称</th>
+                    <th>子任务名称</th>
+                    <th>已复习次数</th>
+                    <th>应复习时间</th>
+                    <th>&nbsp;&nbsp; </th>
+                </tr>
+                {% for item in other_need_review %}
+                <tr>
+                    <td class="num"></td>
+                    <td>{{ item.t_name }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.learned_times }}</td>
+                    <td>{{ item.next_begin_time }}</td>
+                    <td><input type="checkbox" name="reviewed" value="{{ item.id }}"></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </form>
     </div>
-    </div>
-</body>
-<script>
-$(function(){
-    var timestamp = Date.parse(new Date());
-    $('.time').each(function () {
-        var time_str = $(this).attr('time');
-        var cur_time = new Date(time_str).getTime();
-        var pro = parseInt($(this).next().text());
-        if (cur_time <= timestamp && pro != 0) {
-            $(this).parent().addClass('bg_yellow');
-        } else if(cur_time <= timestamp && pro == 0) {
-            $(this).parent().addClass('bg_red');
-        }
+    {% endif %}
 
-    })
-	//新增行
-	$('.btn-add').click(function(){
-		var str = $('#add_tpl').html();
-		$('#add_body').append(str);
-		renderAction();
-		renderNum();
-		renderSelect();
-	})
-	renderAction();
-	renderSelect();
-	renderNum();
-})
+{% endblock %}
 
-function renderSelect() {
-    $('.select').change(function () {
-        if($(this).val() != 0){
-            $(this).parent().next().find('.ipt').attr('disabled','disabled').val('');
-        } else {
-            $(this).parent().next().find('.ipt').removeAttr('disabled').val('');
-        }
-    })
-
-}
-
-//重新渲染删除
-function renderAction() {
-	$('.btn-del').off('click').click(function(){
-		$(this).parent().parent().remove();
-		renderNum();
-	});
-	
-}
-//重新渲染序号
-function renderNum() {
-	$('table').each(function(index,e){
-		$(this).find('tr .num').each(function(index2,e2){
-		    $(this).html(index2+1)
-        })
-	})
-}
-
-function submitNew() {
-    var flag = true;
-    $('.ipt').each(function () {
-        if(!$(this).is(":disabled") && $(this).val() == ''){
-            flag = false;
-        }
-    })
-    if (!flag) {
-        alert('输入内容不能为空哦');
-    }
-    return flag;
-}
-
-
-</script>
-<style>
-* {margin:0;padding:0;box-sizing: border-box;}
-table{border:0;margin:0;border-collapse:collapse;border-spacing:0;}
-body {background:#f5f6f7;color: #000;font:13px/1.5 PingFang SC,"Microsoft Yahei",verdana;text-align:center; }
-a,
-a:link,
-a:visited,
-a:hover,
-a:focus  { text-decoration:none;}
-a:focus {outline-style:none; -moz-outline-style: none;}  
-.mt5 { margin-top: 5px !important; }
-.main {
-	width:1080px;
-	margin:0 auto;
-	padding:20px 40px;
-	background:#FFF;
-	text-align:left;
-}
-h1 {
-	text-align:center;
-	font-size:30px;
-	font-weight:bold;
-}
-.date {
-	text-align:center;
-	font-size:16px;
-}
-.task {
-	margin:40px 0 0 0;
-}
-.task .hd {
-	font-size:20px;
-	margin:0 0 10px;
-	font-weight:bold;
-}
-.task table td,
-.task table th {
-	border:1px solid #999;
-	padding:5px 10px;
-	font-size:14px;
-	text-align:center;
-}
-.task tr:nth-child(even){
-    background:#e1e5e8;
-}
-.task tr:nth-child(odd){
-    background:#fff;
-}
-.btn {
-	border:none;
-	background:#009cfa;
-	color:#FFF;
-	padding:5px 15px;
-	border-radius:30px;
-}
-.ipt {
-	width:200px;
-	border:1px solid #DDD;
-	padding:2px 5px;
-}
-.ipt2 {
-	width:50px;
-}
-.bg_yellow {
-    background: yellow !important;
-}
-.bg_red {
-    background: red !important;
-    color: white;
-}
-</style>
-</html>
