@@ -74,7 +74,7 @@
                     <th>进度增加</th>
                     <th>&nbsp</th>
                 </tr>
-                <tbody id="add_body">
+                <tbody class="add_line">
                     <tr>
                         <td class="num"></td>
                         <td>
@@ -93,7 +93,7 @@
                 </tbody>
             </table>
         </form>
-		<script type="text/template" id="add_tpl">
+		<script type="text/template" class="add_content">
             <tr>
                 <td class="num"></td>
                 <td>
@@ -110,7 +110,7 @@
                 <td><button type="button" class="btn btn-del">移除</button></td>
             </tr>
 		</script>
-		<button type="button" class="btn btn-add1 mt5">+添加</button>
+		<button type="button" class="btn btn-add mt5">+添加</button>
     </div>
 
     {% if today_learned %}

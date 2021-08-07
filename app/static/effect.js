@@ -54,22 +54,15 @@ $(function(){
         }
     })
 
-	$('.btn-add1').click(function(){
-		var str = $('#add_tpl').html();
-		$('#add_body').append(str);
-		renderAction();
-		renderNum();
-		renderSelect();
-	})
-
-    $('.btn-add2').click(function(){
-		var str = $('#add_long_item').html();
-		$('#add_long_item_line').append(str);
+    $('.btn-add').click(function(){
+		var str = $(this).parent().find('.add_content').html()
+		$(this).parent().find('.add_line').append(str)
 		renderAction();
 		renderNum();
 		renderChangeBtn();
 		renderCancelBtn();
 		renderDatePicker();
+		renderSelect();
 	})
 
 	renderAction();
