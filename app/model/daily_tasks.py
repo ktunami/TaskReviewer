@@ -12,7 +12,7 @@ class DailyTasks(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     total_task_id = db.Column(db.Integer, db.ForeignKey('total_tasks.id'))
-    name = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64))
     learned_times = db.Column(db.Integer, default=0)
     next_begin_time = db.Column(db.DATE, index=True)
     progress = db.Column(db.Integer, default=0)

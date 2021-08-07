@@ -5,12 +5,55 @@ $(function(){
         var cur_time = new Date(time_str).getTime();
         var pro = parseInt($(this).next().text());
         if (cur_time <= timestamp && pro != 0) {
-            $(this).parent().addClass('bg_yellow');
+            $(this).parent().find('.info').html('进行中');
+            $(this).parent().find('.info').addClass('in_progress_info')
         } else if(cur_time <= timestamp && pro == 0) {
-            $(this).parent().addClass('bg_red');
+            $(this).parent().find('.info').html('未开始')
+            $(this).parent().find('.info').addClass('not_start_info')
         }
     })
-	//新增行
+
+    $('.time_exp_begin').each(function () {
+        var flag = $(this).parent().parent().find("input[name='is_begin']").is(":checked")
+        if (!flag) {
+            var time_str = $(this).val();
+            var begin_time = new Date(time_str).getTime();
+            if (begin_time <= timestamp) {
+                $(this).parent().parent().find('.info').html("没开始");
+                $(this).parent().parent().find('.info').addClass('not_start_info');
+            }
+        }
+    })
+
+    $('.time_exp_end').each(function () {
+        var flag = $(this).parent().parent().find("input[name='is_begin']").is(":checked")
+        if (flag) {
+            var time_str = $(this).val();
+            var end_time = new Date(time_str).getTime();
+            if (end_time <= timestamp) {
+                $(this).parent().parent().find('.info').html("没完成");
+                $(this).parent().parent().find('.info').addClass('deadline_info');
+            }
+        }
+    })
+
+    $("input[name='is_begin']:checked").each(function () {
+        var deadline_ele = $(this).parent().parent().find("input[name='e_time']");
+        flag = true;
+        if (deadline_ele.hasClass('time_exp_end')) {
+            var time_str = deadline_ele.val();
+            var end_time = new Date(time_str).getTime();
+            if (end_time <= timestamp) {
+                flag = false;
+
+            }
+        }
+        if (flag) {
+            $(this).parent().parent().find('.info').html("进行中");
+            $(this).parent().parent().find('.info').addClass('in_progress_info');
+        }
+    })
+
 	$('.btn-add1').click(function(){
 		var str = $('#add_tpl').html();
 		$('#add_body').append(str);
@@ -37,6 +80,7 @@ $(function(){
 	renderDatePicker();
 })
 
+
 function renderSelect() {
     $('.select').change(function () {
         if($(this).val() != 0){
@@ -45,14 +89,15 @@ function renderSelect() {
             $(this).parent().next().find('.ipt').removeAttr('disabled').val('');
         }
     })
-
 }
+
 
 function renderDatePicker() {
     $('.ipt_date').fdatepicker({
         format: 'yyyy-mm-dd'
     });
 }
+
 
 function renderChangeBtn() {
     $('.change_btn, .all_long_change_btn').off('click').click(function () {
@@ -73,6 +118,7 @@ function renderChangeBtn() {
     })
 }
 
+
 function renderCancelBtn() {
     $('.cancel_btn, .all_long_cancel_btn').off('click').click(function () {
         var pp = $(this).parent().parent();
@@ -88,7 +134,6 @@ function renderCancelBtn() {
 }
 
 
-//重新渲染删除
 function renderAction() {
 	$('.btn-del').off('click').click(function(){
 		$(this).parent().parent().remove();
@@ -96,7 +141,8 @@ function renderAction() {
 	});
 
 }
-//重新渲染序号
+
+
 function renderNum() {
 	$('table').each(function(index,e){
 		$(this).find('tr .num').each(function(index2,e2){
@@ -104,6 +150,7 @@ function renderNum() {
         })
 	})
 }
+
 
 function submitNew() {
     var flag = true;
@@ -117,6 +164,7 @@ function submitNew() {
     }
     return flag;
 }
+
 
 function submitNewItem(str) {
     var flag = true;

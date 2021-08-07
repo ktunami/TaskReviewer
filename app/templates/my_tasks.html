@@ -159,7 +159,8 @@
                 <th>预计结束</th>
                 <th>开始</th>
                 <th>完成</th>
-                <th></th>
+                <th>修改</th>
+                <th>状态信息</th>
             </tr>
             {% for item in l_term_tasks %}
             <tbody>
@@ -178,13 +179,13 @@
                     <td> <input type="text" disabled class="ipt" name="remarks" value="{{ item.remarks }}"> </td>
 
                     {% if item.expected_begin_time %}
-                        <td> <input type="text" name="s_time" disabled class="ipt_date" value="{{ item.expected_begin_time }}"> </td>
+                        <td> <input type="text" name="s_time" disabled class="ipt_date time_exp_begin" value="{{ item.expected_begin_time }}"> </td>
                     {% else %}
                         <td> <input type="text" name="s_time" disabled class="ipt_date" > </td>
                     {% endif %}
 
                     {% if item.expected_end_time %}
-                        <td> <input type="text" name="e_time" disabled class="ipt_date" value="{{ item.expected_end_time }}"> </td>
+                        <td> <input type="text" name="e_time" disabled class="ipt_date time_exp_end" value="{{ item.expected_end_time }}"> </td>
                     {% else %}
                         <td> <input type="text" name="e_time" disabled class="ipt_date" > </td>
                     {% endif %}
@@ -201,6 +202,7 @@
                         <button type="button" class="btn cancel_btn" style="display: none">取消</button>
                         <input type="hidden" disabled name="item_id" value="{{ item.id }}"/>
                     </td>
+                    <td class="info" ></td>
                 </tr>
             </tbody>
             {% endfor %}

@@ -15,11 +15,11 @@ def get_date(the_date):
     return result
 
 
-def get_days(the_str):
+def get_num(the_str, default):
     if the_str.isdigit():
         return int(the_str)
     else:
-        return 1
+        return default
 
 
 def check_is_url(the_string):

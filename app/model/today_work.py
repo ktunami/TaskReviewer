@@ -14,7 +14,7 @@ class TodayWork(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     total_task_id = db.Column(db.Integer)
     total_task_name = db.Column(db.String(64))
-    name = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64))
     today_date = db.Column(db.DATE, default=datetime.datetime.today().date())
     progress = db.Column(db.Integer, default=0)
 

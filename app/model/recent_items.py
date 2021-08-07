@@ -25,7 +25,7 @@ class RecentItems(db.Model):
         self.content = content
         self.is_content_link = is_content_link
         self.remarks = remarks
-        self.expected_days = get_days(expected_days)
+        self.expected_days = get_num(expected_days, 1)
 
     def __repr__(self):
         return '<RecentItems %r>' % self.name

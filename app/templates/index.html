@@ -18,7 +18,8 @@
                 <th>名称</th>
                 <th>已学次数</th>
                 <th>本次开始</th>
-                <th>进度(百分比)</th>
+                <th>进度(%)</th>
+                <th>状态信息</th>
             </tr>
             {% for item in all_tasks %}
             <tr>
@@ -27,6 +28,7 @@
                 <td>{{ item.learned_times }}</td>
                 <td class="time" time="{{ item.next_begin_time }}">{{ item.next_begin_time }}</td>
                 <td>{{ item.progress }}</td>
+                <td class="info"></td>
             </tr>
             {% endfor %}
         </table>

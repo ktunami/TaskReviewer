@@ -96,10 +96,9 @@ def update_new_short_items(result):
             'content': all_content[i],
             'is_content_link': check_is_url(all_content[i]),
             'remarks': all_remarks[i],
-            'expected_days': get_days(all_need_days[i]),
+            'expected_days': get_num(all_need_days[i], 1),
+            'already_complete': all_id[i] in all_end_checkbox
         })
-    for i in all_end_checkbox:
-        RecentItems.query.filter_by(id=i).update({'already_complete': True})
     db.session.commit()
 
 
@@ -117,19 +116,16 @@ def update_long_items(result):
     all_start_checkbox = result.getlist("is_begin")
     all_end_checkbox = result.getlist("is_end")
     for i in range(len(all_name)):
-        print("id is  ", all_id[i])
         LongTermItems.query.filter_by(id=all_id[i]).update({
                 'name': all_name[i],
                 'content':all_content[i],
                 'is_content_link':check_is_url(all_content[i]),
                 'remarks':all_remarks[i],
                 'expected_begin_time':get_date(all_start_time[i]),
-                'expected_end_time':get_date(all_end_time[i])
+                'expected_end_time':get_date(all_end_time[i]),
+                'already_begin': all_id[i] in all_start_checkbox,
+                'already_complete': all_id[i] in all_end_checkbox
         })
-    for i in all_start_checkbox:
-        LongTermItems.query.filter_by(id=i).update({'already_begin':True})
-    for i in all_end_checkbox:
-        LongTermItems.query.filter_by(id=i).update({'already_complete':True})
     db.session.commit()
 
 
@@ -138,17 +134,28 @@ def new_learned_dealing(result):
     :param result: New learned stuff
     For new learnt stuff, insert them into table 'today_work' temporarily.
     """
+    items = TotalTasks.query.all()
+    id_name_map = {}
+    for each in items:
+        id_name_map[each.id] = each.name
     total_task_ids = result.getlist("total_task_id")
     other_total_task_names = result.getlist("other_total_task_name")
     sub_task_names = result.getlist("sub_task_name")
     prog = result.getlist("progress")
     data_size = len(total_task_ids)
     li = []
+    j = 0
     for i in range(data_size):
+        total_name = None
+        if total_task_ids[i] == '0':
+            total_name = other_total_task_names[j]
+            j = j + 1
+        else:
+            total_name = id_name_map[int(total_task_ids[i])]
         item = TodayWork(total_task_id=total_task_ids[i],
-                         total_task_name=other_total_task_names[i],
+                         total_task_name=total_name,
                          name=sub_task_names[i],
-                         progress=prog[i])
+                         progress=get_num(prog[i], 0))
         li.append(item)
     if len(li):
         db.session.add_all(li)

@@ -102,3 +102,15 @@ h1 {
     background: red !important;
     color: white;
 }
+.not_start_info{
+	background-color: red;
+	color: white;
+}
+.deadline_info{
+	background-color: black;
+	color: white;
+}
+.in_progress_info{
+	background-color: green;
+	color: white;
+}
