@@ -5,7 +5,6 @@
 # @File  : web_views.py
 
 from flask import render_template, request, redirect, url_for
-from sqlalchemy import and_
 from app.controller.data_dealing import *
 from app.model.long_term_items import LongTermItems
 
@@ -67,6 +66,7 @@ def new_learn_for_review():
 
 @app.route('/my_tasks', methods=['POST', 'GET'])
 def my_tasks():
+    pre_dealing()
     l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete==False).all()
     s_term_tasks = RecentItems.query.filter(RecentItems.already_complete == False).all()
     return render_template('my_tasks.html',

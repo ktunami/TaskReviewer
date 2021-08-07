@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %} 学习计划(已完成) {% endblock %}
+{% block title %} 各种计划(已完成) {% endblock %}
 {% block date %} 欢迎使用TaskReviewer，今天是 {{ date }} {{ week_day }} {% endblock %}
 {% block link1 %}
     <a href="{{ url_for('index') }}">学习计划(进行中)</a>
@@ -9,6 +9,64 @@
 {% endblock %}
 
 {% block contents %}
+{% if  all_learnd %}
     <div class="task">
+        <p class="hd">完成的学习任务：( =•ω•= )m </p>
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>创建时间</th>
+                <th>已学次数</th>
+            </tr>
+        {% for item in all_tasks %}
+            <tr>
+                <td class="num"></td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.create_time }}</td>
+                <th>{{ item.learned_times }}</th>
+            </tr>
+        {% endfor %}
+        </table>
     </div>
+{% else %}
+    <div class="task">
+        <p class="hd">完成的学习任务：( =•ω•= )m </p>
+        <p class="hd1">～～～～～咋还搁这杵着呢，滚回去学习吧，啥也没完成呢  (。・д・。) </p>
+    </div>
+{% endif %}
+
+{% if  all_learnd %}
+    <div class="task">
+        <p class="hd">完成的长期任务：( =•ω•= )m </p>
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>资源</th>
+                <th>备注</th>
+                <th>完成时间</th>
+            </tr>
+            {% for item in all_projects %}
+            <tr>
+                <td class="num"></td>
+                <td>{{ item.name }}</td>
+                {% if item.is_content_link %}
+                    <td> <a name="content_link" href="{{ item.content }}" >相关链接</a> </td>
+                {% else %}
+                    <td> {{ item.content }} </td>
+                {% endif %}
+                <td>{{ item.remarks }}</td>
+                <td>{{ item.done_time }}</td>
+            </tr>
+            {% endfor %}
+         </table>
+    </div>
+{% else %}
+    <div class="task">
+        <p class="hd">完成的长期任务：( =•ω•= )m </p>
+        <p class="hd1"> ～～～～～别搁这杵着了，赶紧做项目去吧 (σ｀・д･)σ </p>
+    </div>
+{% endif %}
+
 {% endblock %}

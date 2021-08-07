@@ -14,11 +14,13 @@ class TotalDone(db.Model):
     name = db.Column(db.String(200), unique=True)
     learned_times = db.Column(db.Integer, default=0)
     last_time = db.Column(db.DATE)
+    create_time = db.Column(db.DATE)
 
-    def __init__(self, name, learned_times, last_time):
+    def __init__(self, name, learned_times, last_time, create_time):
         self.name = name
         self.learned_times = learned_times
         self.last_time = last_time
+        self.create_time = create_time
 
     def __repr__(self):
         return '<TotalTasks %r>' % self.name
