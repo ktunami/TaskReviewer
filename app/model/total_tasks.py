@@ -10,14 +10,15 @@ from app import db
 class TotalTasks(db.Model):
     __tablename__ = 'total_tasks'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True)
     name = db.Column(db.String(200), unique=True)
     learned_times = db.Column(db.Integer, default=0)
     next_begin_time = db.Column(db.DATE)
     progress = db.Column(db.Integer, default=0)
     create_time = db.Column(db.DATE)
 
-    def __init__(self, name, next_begin_time, progress, create_time):
+    def __init__(self, project_id, name, next_begin_time, progress, create_time):
+        self.id = project_id
         self.name = name
         self.next_begin_time = next_begin_time
         self.progress = progress

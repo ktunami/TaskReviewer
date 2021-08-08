@@ -15,7 +15,7 @@ a:hover{
 a:focus {outline-style:none; -moz-outline-style: none;}
 .mt5 { margin-top: 5px !important; }
 .main {
-	width:1180px;
+	width:1280px;
 	margin:0 auto;
 	padding:20px 40px;
 	background:#FFF;
@@ -78,7 +78,7 @@ h1 {
 	border:none;
 	background:#009cfa;
 	color:#FFF;
-	padding:5px 15px;
+	padding:5px 10px;
 	border-radius:30px;
 }
 .ipt {
@@ -94,13 +94,6 @@ h1 {
 .ipt_date {
 	width:80px;
 	font-size: 12px;
-}
-.bg_yellow {
-    background: yellow !important;
-}
-.bg_red {
-    background: red !important;
-    color: white;
 }
 .not_start_info{
 	background-color: red;

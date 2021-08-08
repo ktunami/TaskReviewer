@@ -72,7 +72,7 @@
                     <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
                     {% if item.is_content_link %}
                         <td>
-                            <a name="content_link" href="{{ item.content }}" style="width: 200px;background-color:#EEE">相关链接</a>
+                            <a name="content_link" target="_blank" href="{{ item.content }}" style="width: 200px;background-color:#EEE">相关链接</a>
                             <input class="ipt" disabled type="text" value="{{ item.content }}" name="content" style="display: none">
                         </td>
                     {% else %}
@@ -151,7 +151,7 @@
             <p>没有开始就完成的项目会被删掉（代表该项目被删除）</p>
             <table border="1">
             <tr>
-                <th>序号</th>
+                <th>ID</th>
                 <th>名称</th>
                 <th>资源</th>
                 <th>备注</th>
@@ -160,16 +160,18 @@
                 <th>开始</th>
                 <th>完成</th>
                 <th>修改</th>
-                <th>状态信息</th>
+                <th>状态</th>
+                <th>次数</th>
+                <th>学习</th>
             </tr>
             {% for item in l_term_tasks %}
             <tbody>
                 <tr>
-                    <td class="num"></td>
+                    <td>{{ item.id }}</td>
                     <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
                     {% if item.is_content_link %}
                         <td>
-                            <a name="content_link" href="{{ item.content }}" style="width: 200px;background-color:#EEE">相关链接</a>
+                            <a name="content_link" href="{{ item.content }}" target="_blank" style="width: 200px;background-color:#EEE">相关链接</a>
                             <input class="ipt" disabled type="text" value="{{ item.content }}" name="content" style="display: none">
                         </td>
                     {% else %}
@@ -203,6 +205,13 @@
                         <input type="hidden" disabled name="item_id" value="{{ item.id }}"/>
                     </td>
                     <td class="info" ></td>
+                    <td>{{ item.done_times }}</td>
+
+                    {% if item.add_to_study %}
+                        <td> <input type="checkbox" disabled name="is_study_item" value="{{ item.id }}" checked="checked"></td>
+                    {% else %}
+                        <td> <input type="checkbox" disabled name="is_study_item" value="{{ item.id }}" ></td>
+                    {% endif %}
                 </tr>
             </tbody>
             {% endfor %}

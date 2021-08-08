@@ -14,7 +14,7 @@ class DailyTasks(db.Model):
     total_task_id = db.Column(db.Integer, db.ForeignKey('total_tasks.id'))
     name = db.Column(db.String(64))
     learned_times = db.Column(db.Integer, default=0)
-    next_begin_time = db.Column(db.DATE, index=True)
+    next_begin_time = db.Column(db.DATE)
     progress = db.Column(db.Integer, default=0)
 
     def __init__(self, total_task_id, name, next_begin_time, progress):

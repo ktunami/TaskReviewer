@@ -52,7 +52,8 @@ def review_process():
 def new_learn_process():
     if request.method == 'POST':
         result = request.form
-        new_learned_dealing(result)
+        current_date = datetime.datetime.today().date()
+        new_learned_dealing(result, current_date)
         return redirect(url_for('index'))
 
 
@@ -67,7 +68,9 @@ def new_learn_for_review():
 @app.route('/my_tasks', methods=['POST', 'GET'])
 def my_tasks():
     pre_dealing()
-    l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete==False).all()
+    l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete==False).\
+        order_by(LongTermItems.already_begin.desc()).order_by(LongTermItems.done_times.asc()).all()
+
     s_term_tasks = RecentItems.query.filter(RecentItems.already_complete == False).all()
     return render_template('my_tasks.html',
                            l_term_tasks=l_term_tasks,
@@ -96,7 +99,8 @@ def deal_short_items():
 @app.route('/add_short_items', methods=['POST'])
 def add_short_items():
     result = request.form
-    add_new_short_items(result)
+    current_date = datetime.datetime.today().date()
+    add_new_short_items(result, current_date)
     return redirect(url_for('my_tasks'))
 
 

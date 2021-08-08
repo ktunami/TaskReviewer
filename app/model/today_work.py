@@ -15,14 +15,15 @@ class TodayWork(db.Model):
     total_task_id = db.Column(db.Integer)
     total_task_name = db.Column(db.String(64))
     name = db.Column(db.String(64))
-    today_date = db.Column(db.DATE, default=datetime.datetime.today().date())
+    today_date = db.Column(db.DATE)
     progress = db.Column(db.Integer, default=0)
 
-    def __init__(self, total_task_id, total_task_name, name, progress):
+    def __init__(self, total_task_id, total_task_name, name, progress, today_date):
         self.total_task_id = total_task_id
         self.total_task_name = total_task_name
         self.name = name
         self.progress = progress
+        self.today_date = today_date
 
 
     def __repr__(self):

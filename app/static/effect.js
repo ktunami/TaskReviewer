@@ -62,27 +62,14 @@ $(function(){
 		renderChangeBtn();
 		renderCancelBtn();
 		renderDatePicker();
-		renderSelect();
 	})
 
 	renderAction();
-	renderSelect();
 	renderNum();
 	renderChangeBtn();
 	renderCancelBtn();
 	renderDatePicker();
 })
-
-
-function renderSelect() {
-    $('.select').change(function () {
-        if($(this).val() != 0){
-            $(this).parent().next().find('.ipt').attr('disabled','disabled').val('');
-        } else {
-            $(this).parent().next().find('.ipt').removeAttr('disabled').val('');
-        }
-    })
-}
 
 
 function renderDatePicker() {
@@ -161,7 +148,7 @@ function submitNew() {
 
 function submitNewItem(str) {
     var flag = true;
-    $("#"+str+" .add_long_item_line input[name='name']").each(function () {
+    $("#"+str+" input[name='name']").each(function () {
         if($(this).val() == ''){
             flag=false;
         }

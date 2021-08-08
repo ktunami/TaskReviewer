@@ -15,7 +15,8 @@ app.config.from_pyfile('./setting.py')
 
 db = SQLAlchemy(app)
 
-from app.model import total_tasks, daily_tasks, total_done, today_work, long_term_items, recent_items
+from app.model import total_tasks, daily_tasks, total_done
+from app.model import today_work, long_term_items, recent_items, long_projects_done
 
 if app.config.get('DATABASE_INITIALIZATION'):
     db.drop_all()
