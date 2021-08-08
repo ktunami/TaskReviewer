@@ -82,8 +82,10 @@ def my_tasks():
 
 @app.route('/already_done', methods=['GET'])
 def already_done():
+    all_projects_done = TotalDone.query.all()
     if request.method == 'GET':
         return render_template('already_done.html',
+                               all_projects_done=all_projects_done,
                                date=datetime.datetime.today().date(),
                                week_day=app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
                                )

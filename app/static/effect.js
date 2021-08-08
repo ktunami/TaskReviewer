@@ -25,6 +25,19 @@ $(function(){
         }
     })
 
+    $('.time_check').each(function () {
+        var ms = 86400000
+        var time_str = $(this).val();
+        var deadline = new Date(time_str).getTime();
+        var days = $(this).parent().parent().find("input[name='need_days']").val();
+        deadline = deadline + (days-1) * ms;
+        if (deadline <= timestamp) {
+            $(this).parent().parent().find('.info').html("DEADLINE");
+            $(this).parent().parent().find('.info').addClass('deadline_info');
+        }
+
+    })
+
     $('.time_exp_end').each(function () {
         var flag = $(this).parent().parent().find("input[name='is_begin']").is(":checked")
         if (flag) {

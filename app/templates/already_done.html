@@ -9,34 +9,8 @@
 {% endblock %}
 
 {% block contents %}
-{% if  all_learnd %}
-    <div class="task">
-        <p class="hd">完成的学习任务：( =•ω•= )m </p>
-        <table border="1">
-            <tr>
-                <th>ID</th>
-                <th>名称</th>
-                <th>创建时间</th>
-                <th>已学次数</th>
-            </tr>
-        {% for item in all_tasks %}
-            <tr>
-                <td class="num"></td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.create_time }}</td>
-                <th>{{ item.learned_times }}</th>
-            </tr>
-        {% endfor %}
-        </table>
-    </div>
-{% else %}
-    <div class="task">
-        <p class="hd">完成的学习任务：( =•ω•= )m </p>
-        <p class="hd1">～～～～～咋还搁这杵着呢，滚回去学习吧，啥也没完成呢  (。・д・。) </p>
-    </div>
-{% endif %}
 
-{% if  all_learnd %}
+{% if  all_projects_done %}
     <div class="task">
         <p class="hd">完成的长期任务：( =•ω•= )m </p>
         <table border="1">
@@ -47,7 +21,7 @@
                 <th>备注</th>
                 <th>完成时间</th>
             </tr>
-            {% for item in all_projects %}
+            {% for item in all_projects_done %}
             <tr>
                 <td class="num"></td>
                 <td>{{ item.name }}</td>
@@ -57,7 +31,7 @@
                     <td> {{ item.content }} </td>
                 {% endif %}
                 <td>{{ item.remarks }}</td>
-                <td>{{ item.done_time }}</td>
+                <td>{{ item.create_time }}</td>
             </tr>
             {% endfor %}
          </table>
