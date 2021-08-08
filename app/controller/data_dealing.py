@@ -132,6 +132,8 @@ def update_long_items(result):
     items = TotalTasks.query.all()
     for each in items:
         id_list.append(each.id)
+    print("-------->",id_list)
+    print("-------->>",all_add_to_study)
     for i in range(len(all_name)):
         LongTermItems.query.filter_by(id=all_id[i]).update({
             'name': all_name[i],
@@ -144,7 +146,7 @@ def update_long_items(result):
             'already_complete': all_id[i] in all_end_checkbox,
             'add_to_study': all_id[i] in all_add_to_study
         })
-        if all_id[i] in all_add_to_study and all_id[i] not in id_list:
+        if (all_id[i] in all_add_to_study) and (int(all_id[i]) not in id_list):
             create_study_task(all_id[i], all_name[i])
     db.session.commit()
 
