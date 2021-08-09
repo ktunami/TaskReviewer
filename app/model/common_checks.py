@@ -16,9 +16,9 @@ def get_date(the_date):
 
 
 def get_num(the_str, default):
-    if the_str.isdigit():
+    try:
         return int(the_str)
-    else:
+    except:
         return default
 
 

@@ -12,6 +12,7 @@
     <div class="task">
         <form method="POST" id="f1" action="{{ url_for('add_short_items') }}" onsubmit="return submitNewItem('f1')">
         <p class="hd">添加近期项目： <input type="submit" class="btn" value="提交"> </p>
+        <p>(若需要天数n<0, 则为周期任务，即每|n|天需要做一次。否则为一次性任务，即该任务需要n天完成)</p>
             <table border="1">
                 <tr>
                     <th>序号</th>
@@ -46,7 +47,7 @@
 		<button type="button" class="btn btn-add mt5">+添加</button>
     </div>
 
-    {% if s_term_tasks %}
+    {% if s_term_tasks  %}
     <div class="task">
         <form method="POST" action="{{ url_for('deal_short_items') }}" >
             <p class="hd">近期待办
@@ -54,6 +55,7 @@
                 <button type="button" class="btn all_long_change_btn" >全部修改</button>
                 <button type="button"  class="btn all_long_cancel_btn" style="display: none">全部取消</button>
             </p>
+            <p>(预计天数设为正数，表明一次性任务；若为负数，标明是周期性任务)</p>
             <table border="1">
             <tr>
                 <th>序号</th>
@@ -66,8 +68,8 @@
                 <th>修改</th>
                 <th>状态</th>
             </tr>
-            {% for item in s_term_tasks %}
             <tbody>
+            {% for item in s_term_tasks %}
                 <tr>
                     <td class="num"></td>
                     <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
@@ -95,8 +97,8 @@
                     </td>
                     <td class="info"></td>
                 </tr>
-            </tbody>
             {% endfor %}
+            </tbody>
         </table>
         </form>
     </div>
@@ -166,8 +168,8 @@
                 <th>次数</th>
                 <th>学习</th>
             </tr>
-            {% for item in l_term_tasks %}
             <tbody>
+            {% for item in l_term_tasks %}
                 <tr>
                     <td>{{ item.id }}</td>
                     <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
@@ -215,8 +217,8 @@
                         <td> <input type="checkbox" disabled name="is_study_item" value="{{ item.id }}" ></td>
                     {% endif %}
                 </tr>
-            </tbody>
             {% endfor %}
+            </tbody>
         </table>
         </form>
     </div>

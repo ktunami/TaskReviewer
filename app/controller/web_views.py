@@ -67,15 +67,20 @@ def new_learn_for_review():
 
 @app.route('/my_tasks', methods=['POST', 'GET'])
 def my_tasks():
+    today_date = datetime.datetime.today().date()
     pre_dealing()
     l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete==False).\
         order_by(LongTermItems.already_begin.desc()).order_by(LongTermItems.done_times.asc()).all()
-
-    s_term_tasks = RecentItems.query.filter(RecentItems.already_complete == False).all()
+    s_term_data = RecentItems.query.filter(
+        RecentItems.already_complete==False).order_by(RecentItems.expected_days.asc()).all()
+    s_term_li = []
+    for item in s_term_data:
+        if is_short_item_available(today_date, item.create_date, item.expected_days):
+            s_term_li.append(item)
     return render_template('my_tasks.html',
+                           s_term_tasks=s_term_li,
                            l_term_tasks=l_term_tasks,
-                           s_term_tasks=s_term_tasks,
-                           date=datetime.datetime.today().date(),
+                           date=today_date,
                            week_day=app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
                            )
 

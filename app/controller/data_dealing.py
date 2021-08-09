@@ -19,8 +19,8 @@ from sqlalchemy import and_
 
 def review_dealing(val):
     """
-    :param val: Id of DailyTasks
     Update DailyTasks by review information
+    :param val: Id of DailyTasks
     """
     item = DailyTasks.query.filter_by(id=val).first()
     new_learned_times = item.learned_times + 1
@@ -34,8 +34,8 @@ def review_dealing(val):
 
 def add_new_short_items(result, current_date):
     """
-    :param result: New recent tasks
     Add tasks to table 'recent_items'
+    :param result: New recent tasks
     """
     all_names = result.getlist("name")
     all_contents = result.getlist("content")
@@ -57,8 +57,8 @@ def add_new_short_items(result, current_date):
 
 def add_new_long_items(result):
     """
-    :param result: New projects
     Add projects to table 'long_term_items'
+    :param result: New projects
     """
     all_names = result.getlist("name")
     all_contents = result.getlist("content")
@@ -82,8 +82,8 @@ def add_new_long_items(result):
 
 def update_new_short_items(result):
     """
-    :param result: Modified recent tasks
     Update tasks in table 'recent_items'
+    :param result: Modified recent tasks
     """
     all_name = result.getlist("name")
     all_id = result.getlist("item_id")
@@ -116,8 +116,8 @@ def create_study_task(project_id, project_name):
 
 def update_long_items(result):
     """
-    :param result: Modified projects
     Update projects in table 'long_term_items'
+    :param result: Modified projects
     """
     all_name = result.getlist("name")
     all_id = result.getlist("item_id")
@@ -153,8 +153,8 @@ def update_long_items(result):
 
 def new_learned_dealing(result, current_date):
     """
-    :param result: New learned stuff
     For new learnt stuff, insert them into table 'today_work' temporarily.
+    :param result: New learned stuff
     """
     items = TotalTasks.query.all()
     id_name_map = {}
@@ -179,9 +179,9 @@ def new_learned_dealing(result, current_date):
 
 def update_db_by_new_stuff(ids):
     """
-    :param ids: New learnt stuff after today's review.
     Update the progress and the next_begin_time, then add it to table 'daily_tasks'.
     Finally delete the item from table 'today_work'
+    :param ids: New learnt stuff after today's review.
     """
     new_ids = ids.getlist("new_reviewed")
     for i in new_ids:
@@ -205,12 +205,13 @@ def pre_dealing():
     """
     Data preprocessing
     """
+    # Total task and long items
     records = TotalTasks.query.filter(TotalTasks.progress >= 100).all()
     for rec in records:
         learned_times = rec.learned_times + 1
         LongTermItems.query.filter_by(id=rec.id).update({'done_times': learned_times})
         db.session.commit()
-        if learned_times > len(app.config.get('TOTAL_REVIEW_RULES')): #TODO move here
+        if learned_times > len(app.config.get('TOTAL_REVIEW_RULES')):
             new_item = TotalDone(name=rec.name,
                                  learned_times=learned_times,
                                  last_time=rec.next_begin_time,
@@ -240,7 +241,7 @@ def pre_dealing():
     for each in canceled_projects:
         db.session.delete(each)
         db.session.commit()
-    # Move finished projects
+    # Move finished long projects
     projects_to_be_moved = LongTermItems.query.filter(LongTermItems.already_complete).all()
     li = []
     for each in projects_to_be_moved:
@@ -256,7 +257,23 @@ def pre_dealing():
         db.session.delete(each)
         db.session.commit()
     db.session.commit()
-    recent_items_to_be_removed = RecentItems.query.filter(RecentItems.already_complete).all()
+    # Delete finished recent items
+    recent_items_to_be_removed = RecentItems.query.filter(
+        and_(RecentItems.already_complete, RecentItems.expected_days >= 0)).all()
     for each in recent_items_to_be_removed:
         db.session.delete(each)
         db.session.commit()
+
+
+def is_short_item_available(today_date, create_date, expected_days):
+    """
+    Check If the current item can be shown
+    :param today_date: Today date
+    :param create_date: Created date of the short item
+    :param expected_days: Days needed
+    :return: True if the current item can be shown
+    """
+    result = True
+    if expected_days < 0 and (today_date - create_date).days % abs(expected_days) != 0:
+        result = False
+    return result

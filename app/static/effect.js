@@ -30,21 +30,26 @@ $(function(){
         var time_str = $(this).val();
         var deadline = new Date(time_str).getTime();
         var days = $(this).parent().parent().find("input[name='need_days']").val();
-        deadline = deadline + (days-1) * ms;
-        if (deadline <= timestamp) {
-            var days = Math.floor((timestamp - deadline)/ms);
-            if (days == 0) {
-                $(this).parent().parent().find('.info').html('DEADLINE TODAY');
-                $(this).parent().parent().find('.info').addClass('deadline_info');
-            } else {
-                var str = '';
-                if (days > 1) {
-                    str = days.toString() + ' DAYS';
+        if (days < 0) {
+            $(this).parent().parent().find('.info').html('PERIODIC TASK');
+            $(this).parent().parent().find('.info').addClass('periodic_task_info');
+        } else {
+            deadline = deadline + (days-1) * ms;
+            if (deadline <= timestamp) {
+                var days = Math.floor((timestamp - deadline)/ms);
+                if (days == 0) {
+                    $(this).parent().parent().find('.info').html('DEADLINE TODAY');
+                    $(this).parent().parent().find('.info').addClass('deadline_info');
                 } else {
-                    str = days.toString() + ' DAY';
+                    var str = '';
+                    if (days > 1) {
+                        str = days.toString() + ' DAYS';
+                    } else {
+                        str = days.toString() + ' DAY';
+                    }
+                    $(this).parent().parent().find('.info').html(str+" OVERDUE");
+                    $(this).parent().parent().find('.info').addClass('not_start_info');
                 }
-                $(this).parent().parent().find('.info').html(str+" OVERDUE");
-                $(this).parent().parent().find('.info').addClass('not_start_info');
             }
         }
     })
