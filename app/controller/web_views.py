@@ -9,6 +9,16 @@ from app.controller.data_dealing import *
 from app.model.long_term_items import LongTermItems
 
 
+@app.template_filter('strftime')
+def _jinja2_filter_datetime(date, fmt=None):
+    if fmt is None:
+        fmt = '%H:%M'
+    if date is None:
+        return '--'
+    else:
+        return date.strftime(fmt)
+
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
     current_date = datetime.datetime.today().date()
@@ -72,7 +82,8 @@ def my_tasks():
     l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete==False).\
         order_by(LongTermItems.already_begin.desc()).order_by(LongTermItems.done_times.asc()).all()
     s_term_data = RecentItems.query.filter(
-        RecentItems.already_complete==False).order_by(RecentItems.expected_days.asc()).all()
+        RecentItems.already_complete==False).order_by(RecentItems.expected_days.asc()).\
+        order_by(RecentItems.start_time.asc()).all()
     s_term_li = []
     for item in s_term_data:
         if is_short_item_available(today_date, item.create_date, item.expected_days):

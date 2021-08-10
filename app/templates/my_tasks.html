@@ -20,6 +20,7 @@
                     <th>资源</th>
                     <th>备注</th>
                     <th>需要天数</th>
+                    <th>开始时间</th>
                     <th></th>
                 </tr>
                 <tbody class="add_line">
@@ -29,6 +30,7 @@
                         <td> <input type="text" class="ipt" name="content"> </td>
                         <td> <input type="text" class="ipt" name="remarks"> </td>
                         <td> <input type="text" style="width: 50px" name="need_days"> </td>
+                        <td> <input class="timepicker" name="start_time" /> </td>
                         <td><button type="button" class="btn btn-del">移除</button></td>
                     </tr>
                 </tbody>
@@ -41,6 +43,7 @@
                 <td> <input type="text" class="ipt" name="content"> </td>
                 <td> <input type="text" class="ipt" name="remarks"> </td>
                 <td> <input type="text" style="width: 50px" name="need_days"> </td>
+                <td> <input class="timepicker" style="width: 60px" name="start_time" /> </td>
                 <td><button type="button" class="btn btn-del">移除</button></td>
             </tr>
 		</script>
@@ -64,6 +67,7 @@
                 <th>备注</th>
                 <th>生成日期</th>
                 <th>预计天数</th>
+                <th>开始时间</th>
                 <th>完成</th>
                 <th>修改</th>
                 <th>状态</th>
@@ -87,6 +91,8 @@
                     <td> <input type="text" name="create_time" disabled class="ipt_date create_time time_check" value="{{ item.create_date }}" > </td>
 
                     <td> <input type="text" name="need_days" disabled value="{{ item.expected_days }}"> </td>
+
+                    <td> <input type="text" name="start_time" class="timepicker" disabled value="{{ item.start_time|strftime }}"> </td>
 
                     <td> <input type="checkbox" disabled name="is_end" value="{{ item.id }}" ></td>
 

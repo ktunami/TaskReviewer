@@ -1,5 +1,6 @@
 $(function(){
     const timestamp = Date.parse(new Date());
+    renderTimePicker();
     $('.time').each(function () {
         var time_str = $(this).attr('time');
         var cur_time = new Date(time_str).getTime();
@@ -31,7 +32,20 @@ $(function(){
         var deadline = new Date(time_str).getTime();
         var days = $(this).parent().parent().find("input[name='need_days']").val();
         if (days < 0) {
-            $(this).parent().parent().find('.info').html('PERIODIC TASK');
+            var start_time = $(this).parent().parent().find('.timepicker').val()
+            if (isTime(start_time)) {
+                var myDate = new Date();
+                cur_hour = parseInt(myDate.getHours());
+                cur_min = parseInt(myDate.getMinutes());
+                h_m = start_time.split(':');
+                task_hour = parseInt(h_m[0]);
+                task_min = parseInt(h_m[1]);
+                if (task_hour < cur_hour || (task_hour == cur_hour && task_min < cur_min)) {
+                    $(this).parent().parent().find('.info').html('SHOULD DO NOW');
+                } else {
+                   //
+                }
+            }
             $(this).parent().parent().find('.info').addClass('periodic_task_info');
         } else {
             deadline = deadline + (days-1) * ms;
@@ -91,6 +105,7 @@ $(function(){
 		renderChangeBtn();
 		renderCancelBtn();
 		renderDatePicker();
+		renderTimePicker();
 	})
 
 	renderAction();
@@ -186,4 +201,23 @@ function submitNewItem(str) {
         alert('名称不能为空哦');
     }
     return flag;
+}
+
+function renderTimePicker() {
+    $('input.timepicker').timepicker({
+        timeFormat: 'HH:mm',
+        interval: 30,
+        minTime: '6',
+        maxTime: '23',
+        defaultTime: '',
+        startTime: '6:00',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+}
+
+function isTime(time_str){
+   var regex=/^(?:(?:[0-2][0-3])|(?:[0-1][0-9])):[0-5][0-9]$/;
+   return regex.test(time_str)
 }

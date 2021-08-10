@@ -8,6 +8,13 @@ import datetime
 import re
 
 
+def get_checked_time(datetime_str):
+    try:
+        return datetime.datetime.strptime(datetime_str, '%H:%M')
+    except ValueError:
+        return None
+
+
 def get_date(the_date):
     result = None
     if the_date != "":
