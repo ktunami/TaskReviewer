@@ -98,7 +98,8 @@ def my_tasks():
 
 @app.route('/already_done', methods=['GET'])
 def already_done():
-    all_projects_done = TotalDone.query.all()
+    all_projects_done = LongProjectsDone.query.all()
+    print(all_projects_done)
     if request.method == 'GET':
         return render_template('already_done.html',
                                all_projects_done=all_projects_done,

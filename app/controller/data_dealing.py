@@ -217,19 +217,15 @@ def pre_dealing():
         LongTermItems.query.filter_by(id=rec.id).update({'done_times': learned_times})
         db.session.commit()
         if learned_times > len(app.config.get('TOTAL_REVIEW_RULES')):
-            new_item = TotalDone(name=rec.name,
-                                 learned_times=learned_times,
-                                 last_time=rec.next_begin_time,
-                                 create_time=rec.create_time)
             item_to_move = LongTermItems.query.filter_by(id=rec.id).first()
             item = LongProjectsDone(
+                id=rec.id,
                 name=item_to_move.name,
                 content=item_to_move.content,
                 is_content_link=item_to_move.is_content_link,
                 remarks=item_to_move.remarks,
                 done_time=datetime.datetime.today().date())
             db.session.add(item)
-            db.session.add(new_item)
             db.session.delete(item_to_move)
             db.session.delete(rec)
             db.session.commit()
@@ -251,6 +247,7 @@ def pre_dealing():
     li = []
     for each in projects_to_be_moved:
         item = LongProjectsDone(
+            id=each.id,
             name=each.name,
             content=each.content,
             is_content_link=each.is_content_link,
@@ -271,7 +268,6 @@ def pre_dealing():
     # Deal with completed recent items
     today_date = datetime.datetime.today().date()
     RecentItems.query.filter(RecentItems.complete_date < today_date).update({'already_complete': False})
-    # RecentItems.query.filter(RecentItems.complete_date == None).update({'already_complete': False})
     db.session.commit()
 
 

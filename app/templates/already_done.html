@@ -23,7 +23,7 @@
             </tr>
             {% for item in all_projects_done %}
             <tr>
-                <td class="num"></td>
+                <td>{{ item.id }}</td>
                 <td>{{ item.name }}</td>
                 {% if item.is_content_link %}
                     <td> <a name="content_link" href="{{ item.content }}" >相关链接</a> </td>
@@ -31,7 +31,7 @@
                     <td> {{ item.content }} </td>
                 {% endif %}
                 <td>{{ item.remarks }}</td>
-                <td>{{ item.create_time }}</td>
+                <td>{{ item.done_time }}</td>
             </tr>
             {% endfor %}
          </table>
