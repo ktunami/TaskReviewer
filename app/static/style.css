@@ -1,6 +1,6 @@
 * {margin:0;padding:0;box-sizing: border-box;}
 table{border:0;margin:0;border-collapse:collapse;border-spacing:0;}
-body {background:#f5f6f7;color: #000;font:12px/1.5 PingFang SC,"Microsoft Yahei",verdana;text-align:center; }
+body {background:#ffcc73;color: #000;font:12px/1.5 PingFang SC,"Microsoft Yahei",verdana;text-align:center; }
 a,
 a:link,
 a:visited,
@@ -27,8 +27,8 @@ input{
 }
 
 input:disabled {
-	background-color: #EEE;
-	color: #000;
+	background-color: white;
+	color: #333;
 }
 h1 {
 	text-align:center;
@@ -68,15 +68,9 @@ h1 {
 	font-size:14px;
 	text-align:center;
 }
-.task tr:nth-child(even){
-    background:#e1e5e8;
-}
-.task tr:nth-child(odd){
-    background:#fff;
-}
 .btn {
 	border:none;
-	background:#009cfa;
+	background:#ff6700;
 	color:#FFF;
 	padding:5px 10px;
 	border-radius:30px;
@@ -96,7 +90,7 @@ h1 {
 	font-size: 12px;
 }
 .not_start_info{
-	background-color: red;
+	background-color: #f00;
 	color: white;
 }
 .deadline_info{
@@ -104,13 +98,19 @@ h1 {
 	color: white;
 }
 .in_progress_info{
-	background-color: green;
+	background-color: #1d7373;
 	color: white;
 }
 .periodic_task_info{
-	background-color: cadetblue;
+	background-color: #00a287;
 	color: white;
 }
 .timepicker{
 	width: 60px;
+}
+.highlight_border{
+	border:2px  solid #104BA9;
+}
+.info {
+	width: 140px;
 }

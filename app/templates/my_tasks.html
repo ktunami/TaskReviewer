@@ -74,7 +74,7 @@
             </tr>
             <tbody>
             {% for item in s_term_tasks %}
-                <tr>
+                <tr class="high_line">
                     <td class="num"></td>
                     <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
                     {% if item.is_content_link %}
@@ -170,13 +170,13 @@
                 <th>开始</th>
                 <th>完成</th>
                 <th>修改</th>
-                <th>状态</th>
                 <th>次数</th>
                 <th>学习</th>
+                <th>状态</th>
             </tr>
             <tbody>
             {% for item in l_term_tasks %}
-                <tr>
+                <tr class="high_line">
                     <td>{{ item.id }}</td>
                     <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
                     {% if item.is_content_link %}
@@ -214,7 +214,7 @@
                         <button type="button" class="btn cancel_btn" style="display: none">取消</button>
                         <input type="hidden" disabled name="item_id" value="{{ item.id }}"/>
                     </td>
-                    <td class="info" ></td>
+
                     <td>{{ item.done_times }}</td>
 
                     {% if item.add_to_study %}
@@ -222,6 +222,8 @@
                     {% else %}
                         <td> <input type="checkbox" disabled name="is_study_item" value="{{ item.id }}" ></td>
                     {% endif %}
+
+                     <td class="info" ></td>
                 </tr>
             {% endfor %}
             </tbody>

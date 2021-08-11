@@ -1,15 +1,15 @@
 $(function(){
-    const timestamp = Date.parse(new Date());
+    const timestamp = new Date(new Date().toLocaleDateString()).getTime();
     renderTimePicker();
     $('.time').each(function () {
         var time_str = $(this).attr('time');
-        var cur_time = new Date(time_str).getTime();
+        var cur_time = new Date(dateFormatChange(time_str)).getTime();
         var pro = parseInt($(this).next().text());
         if (cur_time <= timestamp && pro != 0) {
-            $(this).parent().find('.info').html('进行中');
+            $(this).parent().find('.info').html('IN PROGRESS');
             $(this).parent().find('.info').addClass('in_progress_info')
         } else if(cur_time <= timestamp && pro == 0) {
-            $(this).parent().find('.info').html('未开始')
+            $(this).parent().find('.info').html('NOT STARTED')
             $(this).parent().find('.info').addClass('not_start_info')
         }
     })
@@ -18,9 +18,9 @@ $(function(){
         var flag = $(this).parent().parent().find("input[name='is_begin']").is(":checked")
         if (!flag) {
             var time_str = $(this).val();
-            var begin_time = new Date(time_str).getTime();
+            var begin_time = new Date(dateFormatChange(time_str)).getTime();
             if (begin_time <= timestamp) {
-                $(this).parent().parent().find('.info').html("没开始");
+                $(this).parent().parent().find('.info').html("NOT STARTED");
                 $(this).parent().parent().find('.info').addClass('not_start_info');
             }
         }
@@ -29,7 +29,7 @@ $(function(){
     $('.time_check').each(function () {
         var ms = 86400000
         var time_str = $(this).val();
-        var deadline = new Date(time_str).getTime();
+        var deadline = new Date(dateFormatChange(time_str)).getTime();
         var days = $(this).parent().parent().find("input[name='need_days']").val();
         if (days < 0) {
             var start_time = $(this).parent().parent().find('.timepicker').val()
@@ -72,9 +72,9 @@ $(function(){
         var flag = $(this).parent().parent().find("input[name='is_begin']").is(":checked")
         if (flag) {
             var time_str = $(this).val();
-            var end_time = new Date(time_str).getTime();
+            var end_time = new Date(dateFormatChange(time_str)).getTime();
             if (end_time <= timestamp) {
-                $(this).parent().parent().find('.info').html("没完成");
+                $(this).parent().parent().find('.info').html("UNFINISHED");
                 $(this).parent().parent().find('.info').addClass('deadline_info');
             }
         }
@@ -85,14 +85,13 @@ $(function(){
         flag = true;
         if (deadline_ele.hasClass('time_exp_end')) {
             var time_str = deadline_ele.val();
-            var end_time = new Date(time_str).getTime();
+            var end_time = new Date(dateFormatChange(time_str)).getTime();
             if (end_time <= timestamp) {
                 flag = false;
-
             }
         }
         if (flag) {
-            $(this).parent().parent().find('.info').html("进行中");
+            $(this).parent().parent().find('.info').html("IN PROCESS");
             $(this).parent().parent().find('.info').addClass('in_progress_info');
         }
     })
@@ -106,6 +105,7 @@ $(function(){
 		renderCancelBtn();
 		renderDatePicker();
 		renderTimePicker();
+		renderMouseOver();
 	})
 
 	renderAction();
@@ -113,6 +113,7 @@ $(function(){
 	renderChangeBtn();
 	renderCancelBtn();
 	renderDatePicker();
+	renderMouseOver();
 })
 
 
@@ -220,4 +221,17 @@ function renderTimePicker() {
 function isTime(time_str){
    var regex=/^(?:(?:[0-2][0-3])|(?:[0-1][0-9])):[0-5][0-9]$/;
    return regex.test(time_str)
+}
+
+function dateFormatChange(date_str) {
+    return date_str.split('-').join('/')
+}
+
+function renderMouseOver(){
+    $('.high_line').mouseenter(function () {
+        $(this).addClass('highlight_border')
+    })
+    $('.high_line').mouseleave(function () {
+        $(this).removeClass('highlight_border')
+    })
 }
