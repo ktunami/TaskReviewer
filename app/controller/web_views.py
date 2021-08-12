@@ -80,7 +80,13 @@ def my_tasks():
     today_date = datetime.datetime.today().date()
     pre_dealing()
     l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete==False).\
-        order_by(LongTermItems.already_begin.desc()).order_by(LongTermItems.done_times.asc()).all()
+        order_by(LongTermItems.already_begin.desc()).\
+        order_by(LongTermItems.done_times.asc()).\
+        order_by(LongTermItems.expected_end_time.asc()).\
+        order_by(LongTermItems.id.asc()).all()
+
+    print(LongTermItems.query.filter(LongTermItems.already_complete==False).\
+        order_by(LongTermItems.already_begin.desc()).order_by(LongTermItems.done_times.asc()))
     s_term_data = RecentItems.query.filter(
         RecentItems.already_complete==False).order_by(RecentItems.expected_days.asc()).\
         order_by(RecentItems.start_time.asc()).all()

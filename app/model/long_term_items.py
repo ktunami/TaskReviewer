@@ -18,7 +18,7 @@ class LongTermItems(db.Model):
     is_content_link = db.Column(db.Boolean, default=False)
     remarks = db.Column(db.String(255))
     expected_begin_time = db.Column(db.DATE)
-    expected_end_time = db.Column(db.DATE)
+    expected_end_time = db.Column(db.DATE, index=True)
     already_begin = db.Column(db.Boolean, default=False, index=True)
     already_complete = db.Column(db.Boolean, default=False)
     done_times = db.Column(db.Integer, default=0, index=True)
