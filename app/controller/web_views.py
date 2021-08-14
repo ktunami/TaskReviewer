@@ -87,12 +87,15 @@ def my_tasks():
         order_by(LongTermItems.done_times.asc()).\
         order_by(LongTermItems.expected_end_time.asc()).\
         order_by(LongTermItems.id.asc()).all()
-
-    s_term_data = RecentItems.query.filter(
-        RecentItems.already_complete==False).order_by(RecentItems.expected_days.asc()).\
+    s_term_data1 = RecentItems.query.filter(
+        RecentItems.already_complete==False).filter(RecentItems.expected_days < 0).\
         order_by(RecentItems.start_time.asc()).all()
+    s_term_data2 = RecentItems.query.filter(
+        RecentItems.already_complete==False).filter(RecentItems.expected_days >= 0).\
+        order_by(RecentItems.start_time.asc()).all()
+    s_term_data1.extend(s_term_data2)
     s_term_li = []
-    for item in s_term_data:
+    for item in s_term_data1:
         if is_short_item_available(today_date, item.create_date, item.expected_days):
             s_term_li.append(item)
     end_time = time.time()
