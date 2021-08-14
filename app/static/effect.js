@@ -1,5 +1,6 @@
 $(function(){
     const timestamp = new Date(new Date().toLocaleDateString()).getTime();
+    var ms = 86400000
     renderTimePicker();
     $('.time').each(function () {
         var time_str = $(this).attr('time');
@@ -27,7 +28,6 @@ $(function(){
     })
 
     $('.time_check').each(function () {
-        var ms = 86400000
         var time_str = $(this).val();
         var deadline = new Date(dateFormatChange(time_str)).getTime();
         var days = $(this).parent().parent().find("input[name='need_days']").val();
@@ -64,6 +64,9 @@ $(function(){
                     $(this).parent().parent().find('.info').html(str+" OVERDUE");
                     $(this).parent().parent().find('.info').addClass('not_start_info');
                 }
+            } else {
+                var days = Math.floor((deadline - timestamp)/ms);
+                $(this).parent().parent().find('.info').html('D DAY '+days);
             }
         }
     })
@@ -91,7 +94,8 @@ $(function(){
             }
         }
         if (flag) {
-            $(this).parent().parent().find('.info').html("IN PROCESS");
+            var days = Math.floor((end_time - timestamp)/ms);
+            $(this).parent().parent().find('.info').html('D DAY '+days);
             $(this).parent().parent().find('.info').addClass('in_progress_info');
         }
     })
