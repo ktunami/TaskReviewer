@@ -10,10 +10,11 @@ from app.model.common_checks import *
 from app.model.daily_tasks import DailyTasks
 from app.model.today_work import TodayWork
 from app.model.total_tasks import TotalTasks
-from app.model.total_done import TotalDone
 from app.model.long_term_items import LongTermItems
 from app.model.recent_items import RecentItems
 from app.model.long_projects_done import LongProjectsDone
+from app.model.links_record import LinksRecord
+from app.model.tips_record import TipsRecord
 from sqlalchemy import and_
 
 
@@ -80,6 +81,86 @@ def add_new_long_items(result):
     if len(li):
         db.session.add_all(li)
         db.session.commit()
+
+
+def add_new_tips(result):
+    """
+    Add new tips to table 'tips_record' and 'links_record'
+    :param result: New tips
+    """
+    all_names = result.getlist("name")
+    all_instruction = result.getlist("instruction")
+    all_content = result.getlist("content")
+    all_remarks = result.getlist("remarks")
+    tip = TipsRecord(name=all_names[0], instruction=all_instruction[0])
+    db.session.add(tip)
+    db.session.commit()
+    li = []
+    for i in range(len(all_content)):
+        if all_content[i] != "" or all_remarks[i] != "":
+            li.append(LinksRecord(tip_id=tip.id, content=all_content[i], remarks=all_remarks[i]))
+    db.session.add_all(li)
+    db.session.commit()
+
+
+def get_all_tips_and_links():
+    """
+    Get all records from table 'tips_record' and 'links_record'
+    :return: Lists of tips and links
+    """
+    tips = TipsRecord.query.all();
+    links = LinksRecord.query.all();
+    result = []
+    id_map = {}
+    for i in range(len(tips)):
+        result.append([tips[i], []])
+        id_map[tips[i].id] = i
+    for j in range(len(links)):
+        idx = id_map[links[j].tip_id]
+        result[idx][1].append(links[j])
+    return result
+
+
+def update_tips(result):
+    all_tip_ids = result.getlist("tip_id")
+    all_link_ids = result.getlist("link_id")
+    all_names = result.getlist("name")
+    all_instruction = result.getlist("instruction")
+    all_content = result.getlist("content")
+    all_remarks = result.getlist("remarks")
+    all_need_delete = result.getlist("del_link")
+    all_content_new = result.getlist("content_new")
+    all_remarks_new = result.getlist("remarks_new")
+    # Update tips_record
+    TipsRecord.query.filter_by(id=int(all_tip_ids[0])).update({
+        'name': all_names[0],
+        'instruction': all_instruction[0]
+    })
+    # Update links_record
+    for j in range(len(all_link_ids)):
+        if all_link_ids[j] in all_need_delete:
+            del_link = LinksRecord.query.filter_by(id=int(all_link_ids[j])).first()
+            db.session.delete(del_link)
+        elif all_content[j] != "" or all_remarks[j] != "":
+            LinksRecord.query.filter_by(id=int(all_link_ids[j])).update({
+                'content': all_content[j],
+                'remarks': all_remarks[j]
+            })
+        else:
+            del_link = LinksRecord.query.filter_by(id=int(all_link_ids[j])).first()
+            db.session.delete(del_link)
+    # Add new items to links_record
+    links_li = []
+    print(all_remarks_new)
+    for k in range(len(all_content_new)):
+        if all_content_new[k] != "" or all_remarks_new[k] != "":
+            links_li.append(LinksRecord(
+                tip_id=all_tip_ids[0],
+                content=all_content_new[k],
+                remarks=all_remarks_new[k]
+            ))
+    db.session.add_all(links_li)
+    db.session.commit()
 
 
 def update_new_short_items(result):

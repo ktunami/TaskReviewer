@@ -1,15 +1,8 @@
 {% extends "layout.html" %}
 {% block title %} 各种计划(已完成) {% endblock %}
 {% block date %} 欢迎使用TaskReviewer，今天是 {{ date }} {{ week_day }} {% endblock %}
-{% block link1 %}
-    <a href="{{ url_for('index') }}">学习计划(进行中)</a>
-{% endblock %}
-{% block link2 %}
-    <a href="{{ url_for('my_tasks') }}">待办事项</a>
-{% endblock %}
 
 {% block contents %}
-
 {% if  all_projects_done %}
     <div class="task">
         <p class="hd">完成的长期任务：( =•ω•= )m </p>

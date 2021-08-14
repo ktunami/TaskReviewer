@@ -7,6 +7,7 @@
 from flask import render_template, request, redirect, url_for
 from app.controller.data_dealing import *
 from app.model.long_term_items import LongTermItems
+import time
 
 
 @app.template_filter('strftime')
@@ -77,6 +78,8 @@ def new_learn_for_review():
 
 @app.route('/my_tasks', methods=['POST', 'GET'])
 def my_tasks():
+    start_time = time.time()
+    wd = app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
     today_date = datetime.datetime.today().date()
     pre_dealing()
     l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete==False).\
@@ -85,8 +88,6 @@ def my_tasks():
         order_by(LongTermItems.expected_end_time.asc()).\
         order_by(LongTermItems.id.asc()).all()
 
-    print(LongTermItems.query.filter(LongTermItems.already_complete==False).\
-        order_by(LongTermItems.already_begin.desc()).order_by(LongTermItems.done_times.asc()))
     s_term_data = RecentItems.query.filter(
         RecentItems.already_complete==False).order_by(RecentItems.expected_days.asc()).\
         order_by(RecentItems.start_time.asc()).all()
@@ -94,11 +95,13 @@ def my_tasks():
     for item in s_term_data:
         if is_short_item_available(today_date, item.create_date, item.expected_days):
             s_term_li.append(item)
+    end_time = time.time()
+    print("time:%f" % (end_time - start_time))
     return render_template('my_tasks.html',
                            s_term_tasks=s_term_li,
                            l_term_tasks=l_term_tasks,
                            date=today_date,
-                           week_day=app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
+                           week_day=wd
                            )
 
 
@@ -141,3 +144,34 @@ def add_long_items():
     result = request.form
     add_new_long_items(result)
     return redirect(url_for('my_tasks'))
+
+
+@app.route('/deal_tips', methods=['POST', 'GET'])
+def deal_tips():
+    if request.method == 'GET':
+        tip_id = request.args.get("id")
+        del_tip = TipsRecord.query.filter_by(id=int(tip_id)).first()
+        db.session.delete(del_tip)
+        db.session.commit()
+    else:
+        result = request.form
+        update_tips(result)
+    return redirect(url_for('tips_page'))
+
+
+@app.route('/add_tips', methods=['POST'])
+def add_tips():
+    result = request.form
+    add_new_tips(result)
+    return redirect(url_for('tips_page'))
+
+
+@app.route('/tips_page', methods=['POST', 'GET'])
+def tips_page():
+    today_date = datetime.datetime.today().date()
+    tips = get_all_tips_and_links()
+    return render_template('tips.html',
+                           tips=tips,
+                           date=today_date,
+                           week_day=app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
+                           )

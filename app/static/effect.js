@@ -96,6 +96,12 @@ $(function(){
         }
     })
 
+    $('.delete_btn').click(function () {
+        if(confirm("确定要删吗？兄弟")) {
+            window.location.href=$(this).data('href')
+        }
+    })
+
     $('.btn-add').click(function(){
 		var str = $(this).parent().find('.add_content').html()
 		$(this).parent().find('.add_line').append(str)
@@ -127,10 +133,13 @@ function renderDatePicker() {
 function renderChangeBtn() {
     $('.change_btn, .all_long_change_btn').off('click').click(function () {
         var pp = $(this).parent().parent();
-        $(this).parent().parent().find('input, checkbox').removeAttr('disabled');
+        $(this).parent().parent().find('input, checkbox,textarea').removeAttr('disabled');
         $(this).parent().parent().find('.create_time').attr('disabled','disabled');
         $(this).hide();
         $(this).next().show();
+        $(this).next().next().show();
+        $(this).next().next().next().show();
+        pp.find('.tip-add').show();
         if(pp.find('a').length > 0){
             pp.find('a').hide();
             pp.find("input[name='content']").show();
@@ -147,17 +156,23 @@ function renderChangeBtn() {
 function renderCancelBtn() {
     $('.cancel_btn, .all_long_cancel_btn').off('click').click(function () {
         var pp = $(this).parent().parent();
-        $(this).parent().parent().find('input, checkbox').attr('disabled','disabled');
+        $(this).parent().parent().find('input, checkbox, textarea').attr('disabled','disabled');
         $(this).hide();
         $(this).prev().show()
+        $(this).next().hide()
+        $(this).next().next().hide()
+        pp.find('.tip-add').hide();
         if(pp.find('a').length > 0){
             pp.find('a').show();
             pp.find("input[name='content']").hide();
-            pp.find("input[name='content']").attr('disabled','disabled').val('');
+           // pp.find("input[name='content']").attr('disabled','disabled').val('');
         }
     })
 }
 
+function submit_tip_change(form_id) {
+    $('#'+form_id).submit();
+}
 
 function renderAction() {
 	$('.btn-del').off('click').click(function(){
@@ -192,16 +207,26 @@ function submitNew() {
 
 
 function submitNewItem(str) {
-    var flag = true;
+    var flag1 = true;
+    var flag2 = true;
     $("#"+str+" input[name='name']").each(function () {
-        if($(this).val() == ''){
-            flag=false;
+        if($(this).val() == '') {
+            flag1 = false;
         }
     })
-    if (!flag) {
+    var regex = /^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?$/;
+    $("#"+str+" .must_link").each(function () {
+        if($(this).val() != '' && !regex.test($(this).val())) {
+            flag2 = false;
+        }
+    })
+    if (!flag1) {
         alert('名称不能为空哦');
     }
-    return flag;
+    if (!flag2) {
+        alert('输入的"链接"不是正经URL');
+    }
+    return flag1 && flag2;
 }
 
 function renderTimePicker() {

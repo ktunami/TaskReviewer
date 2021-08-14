@@ -1,12 +1,6 @@
 {% extends "layout.html" %}
 {% block title %} 待办事项 {% endblock %}
 {% block date %} 欢迎使用TaskReviewer，今天是 {{ date }} {{ week_day }} {% endblock %}
-{% block link1 %}
-    <a href="{{ url_for('index') }}">学习计划(进行中)</a>
-{% endblock %}
-{% block link2 %}
-    <a href="{{ url_for('already_done') }}">学习计划(已完成)</a>
-{% endblock %}
 
 {% block contents %}
     <div class="task">
@@ -60,13 +54,25 @@
             </p>
             <p>(预计天数设为正数，表明一次性任务；若为负数，标明是周期性任务)</p>
             <table border="1">
+                <colgroup>
+                    <col width="40" />
+                    <col width="190" />
+                    <col width="190" />
+                    <col width="190" />
+                    <col width="85" />
+                    <col width="65" />
+                    <col width="71" />
+                    <col width="39" />
+                    <col width="58" />
+                    <col width="140" />
+                </colgroup>
             <tr>
                 <th>序号</th>
                 <th>名称</th>
                 <th>资源</th>
                 <th>备注</th>
                 <th>生成日期</th>
-                <th>预计天数</th>
+                <th>天数</th>
                 <th>开始时间</th>
                 <th>完成</th>
                 <th>修改</th>
@@ -114,6 +120,15 @@
         <form method="POST" id="f2" action="{{ url_for('add_long_items') }}" onsubmit="return submitNewItem('f2')">
         <p class="hd">添加长期项目： <input type="submit" class="btn" value="提交"> </p>
             <table border="1">
+                <colgroup>
+                    <col width="40" />
+                    <col width="190" />
+                    <col width="190" />
+                    <col width="190" />
+                    <col width="85" />
+                    <col width="85" />
+                    <col width="60" />
+                </colgroup>
                 <tr>
                     <th>序号</th>
                     <th>名称</th>
@@ -160,6 +175,20 @@
             </p>
             <p>没有开始就完成的项目会被删掉（代表该项目被删除）</p>
             <table border="1">
+                <colgroup>
+                    <col width="40" />
+                    <col width="190" />
+                    <col width="190" />
+                    <col width="190" />
+                    <col width="85" />
+                    <col width="85" />
+                    <col width="45" />
+                    <col width="45" />
+                    <col width="60" />
+                    <col width="45" />
+                    <col width="45" />
+                    <col width="140" />
+                </colgroup>
             <tr>
                 <th>ID</th>
                 <th>名称</th>

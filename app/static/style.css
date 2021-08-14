@@ -24,30 +24,70 @@ a:focus {outline-style:none; -moz-outline-style: none;}
 input{
 	width:50px;
 	font-size:12px;
+	padding: 5px 0px;
 }
 
 input:disabled {
 	background-color: white;
 	color: #333;
 }
+a:disabled {
+	background-color: white;
+}
 h1 {
 	text-align:center;
 	font-size:30px;
 	font-weight:bold;
 }
-.all_links{
-	margin-top: 20px;
-	margin-left: 300px;
+.f-left {
+	float:left;
+}
+.clr {
+	clear:both;
+}
+.all_links {
+	margin:20px auto 40px;
+	width: 1200px;
+	padding:0 230px;
+	border-bottom: 1px solid #DDD;
+}
+.all_links ul {
+    display: flex;
+}
+
+
+.all_links li a {
+    height: 40px;
+    line-height: 40px;
+    display: block;
+    text-align: center;
+    background: #f1f1f1;
+    color: #333;
+    border: 1px solid #CCC;
+    border-bottom: 0;
+    font-size: 14px;
+}
+
+.all_links li {
+    display: inline-block;
+    flex: 1;
+}
+
+.all_links li a.on {
+    color: #FFF;
+    font-weight: bold;
+    background: #ff6700;
+    border-color: #ff6700;
 }
 .all_links div{
 	margin: 10px 70px;
 	display: inline-block;
 	text-decoration: underline;
-	font-size: 15px;
+	font-size: 18px;
 }
 .date {
 	text-align:center;
-	font-size:16px;
+	font-size:12px;
 }
 .task {
 	margin:40px 0 0 0;
@@ -66,19 +106,17 @@ h1 {
 	border:1px solid #999;
 	padding:1px 5px;
 	font-size:14px;
-	text-align:center;
 }
 .btn {
 	border:none;
 	background:#ff6700;
 	color:#FFF;
-	padding:5px 10px;
+	padding:2px 10px;
 	border-radius:30px;
 }
 .ipt {
 	width:180px;
 	border:1px solid #DDD;
-	padding:2px 5px;
 }
 .ipt2 {
 	width:50px;
@@ -113,4 +151,16 @@ h1 {
 }
 .info {
 	width: 140px;
+}
+td {
+	vertical-align: middle;
+	text-align: left;
+}
+td > input,
+td > textarea {
+	width: 100% !important;
+	border:1px solid #DDD;
+}
+.mb10{
+	margin-bottom: 10px;
 }
