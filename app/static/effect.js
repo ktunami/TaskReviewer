@@ -2,6 +2,7 @@ $(function(){
     const timestamp = new Date(new Date().toLocaleDateString()).getTime();
     var ms = 86400000
     renderTimePicker();
+    renderAutoTextarea();
     $('.time').each(function () {
         var time_str = $(this).attr('time');
         var cur_time = new Date(dateFormatChange(time_str)).getTime();
@@ -137,7 +138,7 @@ function renderDatePicker() {
 function renderChangeBtn() {
     $('.change_btn, .all_long_change_btn').off('click').click(function () {
         var pp = $(this).parent().parent();
-        $(this).parent().parent().find('input, checkbox,textarea').removeAttr('disabled');
+        $(this).parent().parent().find('input, checkbox, textarea').removeAttr('disabled');
         $(this).parent().parent().find('.create_time').attr('disabled','disabled');
         $(this).hide();
         $(this).next().show();
@@ -263,4 +264,21 @@ function renderMouseOver(){
     $('.high_line').mouseleave(function () {
         $(this).removeClass('highlight_border')
     })
+}
+
+function renderAutoTextarea() {
+    $.fn.autoHeight = function(){
+        function autoHeight(elem){
+            elem.style.height = 'auto';
+            elem.scrollTop = 0; //防抖动
+            elem.style.height = elem.scrollHeight + 'px';
+        }
+        this.each(function(){
+            autoHeight(this);
+            $(this).on('keyup', function(){
+                autoHeight(this);
+            });
+        });
+    }
+    $('textarea[autoHeight]').autoHeight();
 }
