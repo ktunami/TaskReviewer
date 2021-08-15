@@ -33,18 +33,16 @@ $(function(){
         var deadline = new Date(dateFormatChange(time_str)).getTime();
         var days = $(this).parent().parent().find("input[name='need_days']").val();
         if (days < 0) {
-            var start_time = $(this).parent().parent().find('.timepicker').val()
+            var start_time = $(this).parent().parent().find("input[name='start_time']").val()
+            var end_time = $(this).parent().parent().find("input[name='end_time']").val()
             if (isTime(start_time)) {
-                var myDate = new Date();
-                cur_hour = parseInt(myDate.getHours());
-                cur_min = parseInt(myDate.getMinutes());
-                h_m = start_time.split(':');
-                task_hour = parseInt(h_m[0]);
-                task_min = parseInt(h_m[1]);
-                if (task_hour < cur_hour || (task_hour == cur_hour && task_min < cur_min)) {
-                    $(this).parent().parent().find('.info').html('SHOULD DO NOW');
-                } else {
-                   //
+                if (isLaterThanNow(start_time)) {
+                    $(this).parent().parent().find('.info').html('DO IT NOW');
+                }
+            }
+            if (isTime(end_time)) {
+                if (isLaterThanNow(end_time)) {
+                    $(this).parent().parent().find('.info').html('==OVERDUE==');
                 }
             }
             $(this).parent().parent().find('.info').addClass('periodic_task_info');
@@ -281,4 +279,18 @@ function renderAutoTextarea() {
         });
     }
     $('textarea[autoHeight]').autoHeight();
+}
+
+function isLaterThanNow(time) {
+    var curDate = new Date();
+    cur_hour = parseInt(curDate.getHours());
+    cur_min = parseInt(curDate.getMinutes());
+    h_m = time.split(':');
+    task_hour = parseInt(h_m[0]);
+    task_min = parseInt(h_m[1]);
+    if (task_hour < cur_hour || (task_hour == cur_hour && task_min < cur_min)) {
+        return true;
+    } else {
+        return false;
+    }
 }

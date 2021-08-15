@@ -18,11 +18,12 @@ class RecentItems(db.Model):
     remarks = db.Column(db.String(255))
     create_date = db.Column(db.DATE)
     start_time = db.Column(db.TIME, index=True)
+    end_time = db.Column(db.TIME)
     expected_days = db.Column(db.Integer, default=1, index=True)
     already_complete = db.Column(db.Boolean, default=False)
     complete_date = db.Column(db.DATE)
 
-    def __init__(self, name, content, is_content_link, remarks, expected_days, create_date, start_time):
+    def __init__(self, name, content, is_content_link, remarks, expected_days, create_date, start_time, end_time):
         self.name = name
         self.content = content
         self.is_content_link = is_content_link
@@ -30,6 +31,7 @@ class RecentItems(db.Model):
         self.expected_days = get_num(expected_days, 1)
         self.create_date = create_date
         self.start_time = start_time
+        self.end_time = end_time
 
     def __repr__(self):
         return '<RecentItems %r>' % self.name

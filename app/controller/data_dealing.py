@@ -43,6 +43,7 @@ def add_new_short_items(result, current_date):
     all_remarks = result.getlist("remarks")
     all_need_days = result.getlist("need_days")
     all_start_times = result.getlist("start_time")
+    all_end_times = result.getlist("end_time")
     li = []
     for i in range(len(all_names)):
         item = RecentItems(name=all_names[i],
@@ -51,7 +52,8 @@ def add_new_short_items(result, current_date):
                            remarks=all_remarks[i],
                            expected_days=all_need_days[i],
                            create_date=current_date,
-                           start_time=get_checked_time(all_start_times[i]))
+                           start_time=get_checked_time(all_start_times[i]),
+                           end_time=get_checked_time(all_end_times[i]))
         li.append(item)
     if len(li):
         db.session.add_all(li)
@@ -175,6 +177,7 @@ def update_new_short_items(result):
     all_need_days = result.getlist("need_days")
     all_end_checkbox = result.getlist("is_end")
     all_start_times = result.getlist("start_time")
+    all_end_times = result.getlist("end_time")
     current_date = datetime.datetime.today().date()
     for i in range(len(all_name)):
         RecentItems.query.filter_by(id=all_id[i]).update({
@@ -185,6 +188,7 @@ def update_new_short_items(result):
             'expected_days': get_num(all_need_days[i], 1),
             'already_complete': all_id[i] in all_end_checkbox,
             'start_time': get_checked_time(all_start_times[i]),
+            'end_time': get_checked_time(all_end_times[i])
         })
     for i in all_end_checkbox:
         RecentItems.query.filter_by(id=i).update({'complete_date': current_date})
