@@ -217,7 +217,7 @@ function submitNewItem(str) {
             flag1 = false;
         }
     })
-    var regex = /^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?$/;
+    var regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
     $("#"+str+" .must_link").each(function () {
         if($(this).val() != '' && !regex.test($(this).val())) {
             flag2 = false;
