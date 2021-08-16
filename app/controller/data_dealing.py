@@ -206,6 +206,25 @@ def create_study_task(project_id, project_name):
     db.session.commit()
 
 
+def create_recent_periodic_task(tsk_id, name, content, remarks, start_date):
+    current_date = datetime.datetime.today().date()
+    left_part = '['
+    right_part = ']'
+    n_name = left_part + tsk_id + right_part + name
+    item = RecentItems(
+        name=n_name,
+        content=content,
+        is_content_link=check_is_url(content),
+        remarks=remarks,
+        expected_days=str((start_date - current_date).days + 1),
+        create_date=current_date,
+        start_time='6:00',
+        end_time='6:00'
+    )
+    db.session.add(item)
+    db.session.commit()
+
+
 def update_long_items(result):
     """
     Update projects in table 'long_term_items'
@@ -238,6 +257,8 @@ def update_long_items(result):
         })
         if (all_id[i] in all_add_to_study) and (int(all_id[i]) not in id_list):
             create_study_task(all_id[i], all_name[i])
+            create_recent_periodic_task(all_id[i], all_name[i],
+                                        all_content[i], all_remarks[i], get_date(all_start_time[i]).date())
     db.session.commit()
 
 
