@@ -11,7 +11,12 @@
 {% block contents %}
     {% if all_tasks %}
     <div id="total_progress" class="task">
-        <p class="hd">总任务进度：</p>
+        <form method="POST" action="{{ url_for('change_t_name') }}" onsubmit="return submitNewItem('total_progress')">
+        <p class="hd">总任务进度：
+            <button type="button" class="btn all_long_change_btn" >修改</button>
+            <button type="button"  class="btn all_long_cancel_btn" style="display: none">取消</button>
+            <button type="submit" class="btn" style="display: none">保存</button>
+        </p>
         <table border="1">
             <tr>
                 <th>ID</th>
@@ -24,7 +29,10 @@
             {% for item in all_tasks %}
             <tr>
                 <td>{{ item.id }}</td>
-                <td>{{ item.name }}</td>
+                <td>
+                    <input type="text" disabled name="name" value="{{ item.name }}">
+                    <input type="hidden" name="id" value="{{ item.id }}">
+                </td>
                 <td>{{ item.learned_times }}</td>
                 <td class="time" time="{{ item.next_begin_time }}">{{ item.next_begin_time }}</td>
                 <td>{{ item.progress }}</td>
@@ -32,13 +40,18 @@
             </tr>
             {% endfor %}
         </table>
+        </form>
     </div>
     {% endif %}
 
     {% if review_yesterday %}
     <div id="review_yesterday" class="task">
-        <form method="POST" action="{{ url_for('review_process') }}" >
-            <p class="hd">昨日新学内容复习：<button type="submit" class="btn">提交</button> </p>
+        <form method="POST" action="{{ url_for('review_process') }}" onsubmit="return submitNewItem('review_yesterday')">
+            <p class="hd">昨日新学内容复习：
+                <button type="button" class="btn all_long_change_btn" >修改</button>
+                <button type="button"  class="btn all_long_cancel_btn" style="display: none">取消</button>
+                <button type="submit" class="btn" style="display: none">保存</button>
+            </p>
             <table border="1">
                 <tr>
                     <th>序号</th>
@@ -52,10 +65,13 @@
                 <tr>
                     <td class="num"></td>
                     <td>{{ item.t_name }}</td>
-                    <td>{{ item.name }}</td>
+                    <td>
+                        <input type="text" disabled name="name" value="{{ item.name }}">
+                        <input type="hidden" name="id" value="{{ item.id }}">
+                    </td>
                     <td>{{ item.learned_times }}</td>
                     <td>{{ item.next_begin_time }}</td>
-                    <td><input type="checkbox" name="reviewed" value="{{ item.id }}"></td>
+                    <td><input type="checkbox" disabled name="reviewed" value="{{ item.id }}"></td>
                 </tr>
                 {% endfor %}
             </table>
@@ -85,7 +101,7 @@
                             </select>
                         </td>
                         <td><input type="text" class="ipt" name="sub_task_name"></td>
-                        <td><input type="text" class="ipt2" name="progress"></td>
+                        <td><input type="text" class="ipt" name="progress"></td>
                         <td><button type="button" class="btn btn-del">移除</button></td>
                     </tr>
                 </tbody>
@@ -111,8 +127,12 @@
 
     {% if today_learned %}
     <div id="display_new_learned" class="task">
-        <form method="POST" action="{{ url_for('new_learn_for_review') }}" >
-        <p class="hd">今日已学习内容(请于当日及时复习)  <input type="submit" class="btn" value="提交"></p>
+        <form method="POST" action="{{ url_for('new_learn_for_review') }}" onsubmit="return submitNewItem('display_new_learned')" >
+        <p class="hd">今日已学习内容(请于当日及时复习)
+            <button type="button" class="btn all_long_change_btn" >修改</button>
+            <button type="button"  class="btn all_long_cancel_btn" style="display: none">取消</button>
+            <button type="submit" class="btn" style="display: none">保存</button>
+        </p>
             <table border="1">
                 <tr>
                     <th>序号</th>
@@ -124,8 +144,11 @@
                 <tr>
                     <td class="num"></td>
                     <td>{{ item.total_task_name }}</td>
-                    <td>{{ item.name }}</td>
-                    <td><input type="checkbox" name="new_reviewed" value="{{ item.id }}"></td>
+                    <td>
+                        <input type="text" disabled name="name" value="{{ item.name }}">
+                        <input type="hidden" name="id" value="{{ item.id }}">
+                    </td>
+                    <td><input type="checkbox" disabled name="new_reviewed" value="{{ item.id }}"></td>
                 </tr>
                 {% endfor %}
             </table>
@@ -135,8 +158,12 @@
 
     {% if other_need_review %}
     <div id="review_others" class="task">
-        <form method="POST" action="{{ url_for('review_process') }}" >
-            <p class="hd">之前需要复习的内容：<button type="submit" class="btn" >提交</button></p>
+        <form method="POST" action="{{ url_for('review_process') }}" onsubmit="return submitNewItem('review_others')" >
+            <p class="hd">之前需要复习的内容：
+                <button type="button" class="btn all_long_change_btn" >修改</button>
+                <button type="button"  class="btn all_long_cancel_btn" style="display: none">取消</button>
+                <button type="submit" class="btn" style="display: none">保存</button>
+            </p>
             <table border="1">
                 <tr>
                     <th>序号</th>
@@ -150,10 +177,13 @@
                 <tr>
                     <td class="num"></td>
                     <td>{{ item.t_name }}</td>
-                    <td>{{ item.name }}</td>
+                    <td>
+                        <input disabled type="text" name="name" value="{{ item.name }}">
+                        <input type="hidden" name="id" value="{{ item.id }}">
+                    </td>
                     <td>{{ item.learned_times }}</td>
                     <td>{{ item.next_begin_time }}</td>
-                    <td><input type="checkbox" name="reviewed" value="{{ item.id }}"></td>
+                    <td><input disabled type="checkbox" name="reviewed" value="{{ item.id }}"></td>
                 </tr>
                 {% endfor %}
             </table>

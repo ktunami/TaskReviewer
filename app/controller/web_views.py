@@ -53,6 +53,7 @@ def index():
 @app.route('/review', methods=['POST'])
 def review_process():
     if request.method == 'POST':
+        change_names(request.form, 2)
         daily_ids = request.form.getlist("reviewed")
         for val in daily_ids:
             review_dealing(val)
@@ -63,6 +64,7 @@ def review_process():
 def new_learn_process():
     if request.method == 'POST':
         result = request.form
+        change_names(result, 1)
         current_date = datetime.datetime.today().date()
         new_learned_dealing(result, current_date)
         return redirect(url_for('index'))
@@ -72,8 +74,16 @@ def new_learn_process():
 def new_learn_for_review():
     if request.method == 'POST':
         result = request.form
+        change_names(result, 2)
         update_db_by_new_stuff(result)
         return redirect(url_for('index'))
+
+
+@app.route('/change_t_name', methods=['POST', 'GET'])
+def change_t_name():
+    result = request.form
+    change_names(result, 0)
+    return redirect(url_for('index'))
 
 
 @app.route('/my_tasks', methods=['POST', 'GET'])
@@ -91,8 +101,8 @@ def my_tasks():
         RecentItems.already_complete==False).filter(RecentItems.expected_days < 0).\
         order_by(RecentItems.start_time.asc()).all()
     s_term_data2 = RecentItems.query.filter(
-        RecentItems.already_complete==False).filter(RecentItems.expected_days >= 0).\
-        order_by(RecentItems.start_time.asc()).all()
+        RecentItems.already_complete==False).filter(RecentItems.expected_days >= 0).all()
+    s_term_data2.sort(key=lambda item: item.create_date + datetime.timedelta(days=item.expected_days))
     s_term_data1.extend(s_term_data2)
     s_term_li = []
     for item in s_term_data1:

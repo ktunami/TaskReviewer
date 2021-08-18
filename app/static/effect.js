@@ -132,7 +132,6 @@ function renderDatePicker() {
     });
 }
 
-
 function renderChangeBtn() {
     $('.change_btn, .all_long_change_btn').off('click').click(function () {
         var pp = $(this).parent().parent();

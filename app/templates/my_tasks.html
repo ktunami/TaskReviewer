@@ -133,7 +133,7 @@
     {% endif %}
 
     <div class="task">
-        <form method="POST" id="f2" action="{{ url_for('add_long_items') }}" onsubmit="return submitNewItem('f2')">
+        <form method="POST" id="f2" action="{{ url_for('add_long_items') }}#f2" onsubmit="return submitNewItem('f2')">
         <p class="hd">添加长期项目： <input type="submit" class="btn" value="提交"> </p>
             <table border="1">
                 <colgroup>

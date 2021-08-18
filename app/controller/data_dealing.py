@@ -389,3 +389,24 @@ def is_short_item_available(today_date, create_date, expected_days):
     if expected_days < 0 and (today_date - create_date).days % abs(expected_days) != 0:
         result = False
     return result
+
+
+def change_names(result, mode):
+    """
+    Change names in some tables
+    :param result: input data
+    :param mode:
+          0 ---- total_tasks
+          1 ---- today_work
+          2 ____ daily_tasks
+    """
+    all_name = result.getlist("name")
+    all_id = result.getlist("id")
+    for i in range(len(all_id)):
+        if mode == 0:
+            TotalTasks.query.filter_by(id=int(all_id[i])).update({'name': all_name[i]})
+        elif mode == 1:
+            TodayWork.query.filter_by(id=int(all_id[i])).update({'name': all_name[i]})
+        else:
+            DailyTasks.query.filter_by(id=int(all_id[i])).update({'name': all_name[i]})
+        db.session.commit()
