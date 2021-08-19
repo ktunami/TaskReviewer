@@ -66,6 +66,7 @@ def add_new_long_items(result):
     :param result: New projects
     """
     all_names = result.getlist("name")
+    all_categories = result.getlist("category")
     all_contents = result.getlist("content")
     all_remarks = result.getlist("remarks")
     all_expect_begins = result.getlist("expect_begin")
@@ -74,6 +75,7 @@ def add_new_long_items(result):
     li = []
     for i in range(data_size):
         item = LongTermItems(name=all_names[i],
+                             category=all_categories[i],
                              content=all_contents[i],
                              is_content_link=check_is_url(all_contents[i]),
                              remarks=all_remarks[i],
@@ -179,19 +181,40 @@ def update_new_short_items(result):
     all_start_times = result.getlist("start_time")
     all_end_times = result.getlist("end_time")
     current_date = datetime.datetime.today().date()
+    all_create_times = result.getlist("create_time")
+    all_total_ids = result.getlist("total_id")
+
+    id_list = []
+    id_name_map = {}
+    items = TotalTasks.query.all()
+    for each in items:
+        id_list.append(each.id)
+        id_name_map[each.id] = each.name
+
     for i in range(len(all_name)):
         RecentItems.query.filter_by(id=all_id[i]).update({
             'name': all_name[i],
             'content': all_content[i],
             'is_content_link': check_is_url(all_content[i]),
             'remarks': all_remarks[i],
+            'create_date': get_date(all_create_times[i]),
             'expected_days': get_num(all_need_days[i], 1),
             'already_complete': all_id[i] in all_end_checkbox,
             'start_time': get_checked_time(all_start_times[i]),
             'end_time': get_checked_time(all_end_times[i])
         })
-    for i in all_end_checkbox:
-        RecentItems.query.filter_by(id=i).update({'complete_date': current_date})
+        if all_id[i] in all_end_checkbox:
+            RecentItems.query.filter_by(id=i).update({'complete_date': current_date})
+            if int(all_total_ids[i]) in id_list:
+                name_progress = all_remarks[i].split('_')
+                if len(name_progress) == 2:
+                    it = TodayWork(
+                        total_task_id=all_total_ids[i],
+                        total_task_name=id_name_map[int(all_total_ids[i])],
+                        name=name_progress[0],
+                        progress=int(name_progress[1]),
+                        today_date=current_date)
+                    db.session.add(it)
     db.session.commit()
 
 
@@ -206,20 +229,25 @@ def create_study_task(project_id, project_name):
     db.session.commit()
 
 
-def create_recent_periodic_task(tsk_id, name, content, remarks, start_date):
-    current_date = datetime.datetime.today().date()
+def get_task_name(tsk_id, name):
     left_part = '['
     right_part = ']'
-    n_name = left_part + tsk_id + right_part + name
+    return left_part + tsk_id + right_part + name
+
+
+def create_recent_periodic_task(tsk_id, name, content, remarks, start_date, category):
+    n_name = get_task_name(tsk_id, name)
+    st_time, e_time = app.config.get('CATEGORIES')[category]
     item = RecentItems(
         name=n_name,
         content=content,
         is_content_link=check_is_url(content),
         remarks=remarks,
-        expected_days=str((start_date - current_date).days + 1),
-        create_date=current_date,
-        start_time='6:00',
-        end_time='6:00'
+        expected_days='-1',   #str((start_date - current_date).days + 1),
+        create_date=start_date,
+        start_time=st_time,
+        end_time=e_time,
+        lid=tsk_id
     )
     db.session.add(item)
     db.session.commit()
@@ -239,13 +267,22 @@ def update_long_items(result):
     all_start_checkbox = result.getlist("is_begin")
     all_end_checkbox = result.getlist("is_end")
     all_add_to_study = result.getlist("is_study_item")
-    id_list = []
-    items = TotalTasks.query.all()
-    for each in items:
-        id_list.append(each.id)
+    all_categories = result.getlist("category")
+
+    # get study item id
+    id_list = set([])
+    items1 = TotalTasks.query.all()
+    for each in items1:
+        id_list.add(each.id)
+    # get short task id
+    short_id_list = set([])
+    items2 = RecentItems.query.all()
+    for each in items2:
+        short_id_list.add(each.long_tsk_id)
     for i in range(len(all_name)):
         LongTermItems.query.filter_by(id=all_id[i]).update({
             'name': all_name[i],
+            'category': all_categories[i],
             'content': all_content[i],
             'is_content_link': check_is_url(all_content[i]),
             'remarks': all_remarks[i],
@@ -255,10 +292,26 @@ def update_long_items(result):
             'already_complete': all_id[i] in all_end_checkbox,
             'add_to_study': all_id[i] in all_add_to_study
         })
-        if (all_id[i] in all_add_to_study) and (int(all_id[i]) not in id_list):
-            create_study_task(all_id[i], all_name[i])
-            create_recent_periodic_task(all_id[i], all_name[i],
-                                        all_content[i], all_remarks[i], get_date(all_start_time[i]).date())
+        # Create or update study item and periodic task
+        if all_id[i] in all_add_to_study:
+            # study item
+            if int(all_id[i]) in id_list:
+                TotalTasks.query.filter_by(id=int(all_id[i])).update({'name': all_name[i]})
+            else:
+                create_study_task(all_id[i], all_name[i])
+            # periodic task
+            if int(all_id[i]) in short_id_list:
+                st_time, e_time = app.config.get('CATEGORIES')[all_categories[i]]
+                RecentItems.query.filter_by(long_tsk_id=int(all_id[i])).\
+                    update({'name': get_task_name(all_id[i], all_name[i]),
+                            'create_date': get_date(all_start_time[i]).date(),
+                            'start_time': st_time,
+                            'end_time': e_time})
+            else:
+                create_recent_periodic_task(
+                    all_id[i], all_name[i], all_content[i], all_remarks[i],
+                    get_date(all_start_time[i]).date(),
+                    all_categories[i])
     db.session.commit()
 
 

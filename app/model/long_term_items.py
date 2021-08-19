@@ -14,6 +14,7 @@ class LongTermItems(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(64))
+    category = db.Column(db.String(64))
     content = db.Column(db.String(255))
     is_content_link = db.Column(db.Boolean, default=False)
     remarks = db.Column(db.String(255))
@@ -24,8 +25,9 @@ class LongTermItems(db.Model):
     done_times = db.Column(db.Integer, default=0, index=True)
     add_to_study = db.Column(db.Boolean, default=False)
 
-    def __init__(self, name, content, is_content_link, remarks, expected_begin_time, expected_end_time):
+    def __init__(self, name, category, content, is_content_link, remarks, expected_begin_time, expected_end_time):
         self.name = name
+        self.category = category
         self.content = content
         self.is_content_link = is_content_link
         self.remarks = remarks

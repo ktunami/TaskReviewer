@@ -97,8 +97,8 @@ def my_tasks():
         order_by(LongTermItems.done_times.asc()).\
         order_by(LongTermItems.expected_end_time.asc()).\
         order_by(LongTermItems.id.asc()).all()
-    s_term_data1 = RecentItems.query.filter(
-        RecentItems.already_complete==False).filter(RecentItems.expected_days < 0).\
+    s_term_data1 = RecentItems.query.filter(and_(RecentItems.already_complete==False, today_date >= RecentItems.create_date)
+        ).filter(RecentItems.expected_days < 0).\
         order_by(RecentItems.start_time.asc()).all()
     s_term_data2 = RecentItems.query.filter(
         RecentItems.already_complete==False).filter(RecentItems.expected_days >= 0).all()
@@ -114,7 +114,8 @@ def my_tasks():
                            s_term_tasks=s_term_li,
                            l_term_tasks=l_term_tasks,
                            date=today_date,
-                           week_day=wd
+                           week_day=wd,
+                           categories=app.config.get('CATEGORIES')
                            )
 
 

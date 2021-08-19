@@ -64,7 +64,7 @@
                 <button type="button" class="btn all_long_change_btn" >全部修改</button>
                 <button type="button"  class="btn all_long_cancel_btn" style="display: none">全部取消</button>
             </p>
-            <p>(预计天数设为正数，表明一次性任务；若为负数，标明是周期性任务)</p>
+            <p>(预计天数设为正数，表明一次性任务；若为负数，标明是周期性任务. 周期性任务完成时需要在备注填好"子任务名称_增加的进度")</p>
             <table border="1">
                 <colgroup>
                     <col width="40" />
@@ -84,7 +84,7 @@
                 <th>名称</th>
                 <th>资源</th>
                 <th>备注</th>
-                <th>生成日期</th>
+                <th>开始日期</th>
                 <th>天数</th>
                 <th>开始时间</th>
                 <th>结束时间</th>
@@ -96,7 +96,10 @@
             {% for item in s_term_tasks %}
                 <tr class="high_line">
                     <td class="num"></td>
-                    <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
+                    <td>
+                        <input class="ipt" disabled type="text" name="name" value="{{ item.name }}">
+                        <input type="hidden" disabled name="total_id" value="{{ item.long_tsk_id }}">
+                    </td>
                     {% if item.is_content_link %}
                         <td>
                             <a name="content_link" target="_blank" href="{{ item.content }}" style="width: 200px;background-color:#EEE">相关链接</a>
@@ -139,6 +142,7 @@
                 <colgroup>
                     <col width="40" />
                     <col width="190" />
+                    <col wtdth="60" />
                     <col width="190" />
                     <col width="190" />
                     <col width="85" />
@@ -148,6 +152,7 @@
                 <tr>
                     <th>序号</th>
                     <th>名称</th>
+                    <th>类型</th>
                     <th>资源</th>
                     <th>备注</th>
                     <th>预计开始</th>
@@ -158,6 +163,13 @@
                     <tr>
                         <td class="num"></td>
                         <td> <input type="text" class="ipt" name="name"> </td>
+                        <td>
+                            <select name="category" >
+                                {% for key in categories.keys() %}
+                                <option value="{{ key }}" >{{ key }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
                         <td> <input type="text" class="ipt" name="content"> </td>
                         <td> <input type="text" class="ipt" name="remarks"> </td>
                         <td> <input type="text" class="ipt_date" name="expect_begin"> </td>
@@ -171,6 +183,13 @@
             <tr>
                 <td class="num"></td>
                 <td> <input type="text" class="ipt" name="name"> </td>
+                <td>
+                    <select name="category" >
+                        {% for key in categories.keys() %}
+                        <option value="{{ key }}" >{{ key }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
                 <td> <input type="text" class="ipt" name="content"> </td>
                 <td> <input type="text" class="ipt" name="remarks"> </td>
                 <td> <input type="text" class="ipt_date" name="expect_begin"> </td>
@@ -194,6 +213,7 @@
                 <colgroup>
                     <col width="40" />
                     <col width="190" />
+                    <col width="60" />
                     <col width="190" />
                     <col width="190" />
                     <col width="85" />
@@ -208,6 +228,7 @@
             <tr>
                 <th>ID</th>
                 <th>名称</th>
+                <th>类型</th>
                 <th>资源</th>
                 <th>备注</th>
                 <th>预计开始</th>
@@ -224,6 +245,13 @@
                 <tr class="high_line">
                     <td>{{ item.id }}</td>
                     <td> <input class="ipt" disabled type="text" name="name" value="{{ item.name }}"> </td>
+                    <td>
+                        <select disabled name="category" >
+                            {% for key in categories.keys() %}
+                            <option value="{{ key }}" {% if key==item.category %} selected="selected"{% endif %} >{{ key }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
                     {% if item.is_content_link %}
                         <td>
                             <a name="content_link" href="{{ item.content }}" target="_blank" style="width: 200px;background-color:#EEE">相关链接</a>

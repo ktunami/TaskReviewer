@@ -135,8 +135,7 @@ function renderDatePicker() {
 function renderChangeBtn() {
     $('.change_btn, .all_long_change_btn').off('click').click(function () {
         var pp = $(this).parent().parent();
-        $(this).parent().parent().find('input, checkbox, textarea').removeAttr('disabled');
-        $(this).parent().parent().find('.create_time').attr('disabled','disabled');
+        $(this).parent().parent().find('input, checkbox, textarea, select').removeAttr('disabled');
         $(this).hide();
         $(this).next().show();
         $(this).next().next().show();
@@ -158,7 +157,7 @@ function renderChangeBtn() {
 function renderCancelBtn() {
     $('.cancel_btn, .all_long_cancel_btn').off('click').click(function () {
         var pp = $(this).parent().parent();
-        $(this).parent().parent().find('input, checkbox, textarea').attr('disabled','disabled');
+        $(this).parent().parent().find('input, checkbox, textarea, select').attr('disabled','disabled');
         $(this).hide();
         $(this).prev().show()
         $(this).next().hide()
