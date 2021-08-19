@@ -204,7 +204,7 @@ def update_new_short_items(result):
             'end_time': get_checked_time(all_end_times[i])
         })
         if all_id[i] in all_end_checkbox:
-            RecentItems.query.filter_by(id=i).update({'complete_date': current_date})
+            RecentItems.query.filter_by(id=all_id[i]).update({'complete_date': current_date})
             if int(all_total_ids[i]) in id_list:
                 name_progress = all_remarks[i].split('_')
                 if len(name_progress) == 2:
