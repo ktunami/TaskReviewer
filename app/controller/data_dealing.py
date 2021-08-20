@@ -292,18 +292,21 @@ def update_long_items(result):
             'already_complete': all_id[i] in all_end_checkbox,
             'add_to_study': all_id[i] in all_add_to_study
         })
-        # Create or update study item and periodic task
+        # Create or update study item
         if all_id[i] in all_add_to_study:
-            # study item
             if int(all_id[i]) in id_list:
                 TotalTasks.query.filter_by(id=int(all_id[i])).update({'name': all_name[i]})
             else:
                 create_study_task(all_id[i], all_name[i])
-            # periodic task
+        # Create or update periodic task
+        if all_id[i] in all_start_checkbox:
             if int(all_id[i]) in short_id_list:
                 st_time, e_time = app.config.get('CATEGORIES')[all_categories[i]]
                 RecentItems.query.filter_by(long_tsk_id=int(all_id[i])).\
                     update({'name': get_task_name(all_id[i], all_name[i]),
+                            'content': all_content[i],
+                            'is_content_link': check_is_url(all_content[i]),
+                            'remarks': all_remarks[i],
                             'create_date': get_date(all_start_time[i]).date(),
                             'start_time': st_time,
                             'end_time': e_time})
@@ -312,6 +315,10 @@ def update_long_items(result):
                     all_id[i], all_name[i], all_content[i], all_remarks[i],
                     get_date(all_start_time[i]).date(),
                     all_categories[i])
+        else:
+            line = RecentItems.query.filter(RecentItems.long_tsk_id==int(all_id[i])).first()
+            db.session.delete(line)
+            db.session.commit()
     db.session.commit()
 
 

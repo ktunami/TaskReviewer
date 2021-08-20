@@ -210,6 +210,7 @@ function submitNew() {
 function submitNewItem(str) {
     var flag1 = true;
     var flag2 = true;
+    var flag3 = true;
     $("#"+str+" input[name='name']").each(function () {
         if($(this).val() == '') {
             flag1 = false;
@@ -221,13 +222,25 @@ function submitNewItem(str) {
             flag2 = false;
         }
     })
+    $("#"+str+" input[name='is_begin']").each(function () {
+        if($(this).is(':checked')) {
+            var tr = $(this).parent().parent();
+            if (tr.find("input[name='s_time']").val()=='' || tr.find("input[name='e_time']").val()=='') {
+                flag3 = false;
+            }
+        }
+    })
+
     if (!flag1) {
         alert('名称不能为空哦');
     }
     if (!flag2) {
         alert('输入的"链接"不是正经URL');
     }
-    return flag1 && flag2;
+    if (!flag3) {
+        alert('已开始的项目必须设置起止日期');
+    }
+    return flag1 && flag2 && flag3;
 }
 
 function renderTimePicker() {

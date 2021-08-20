@@ -202,13 +202,15 @@
 
     {% if l_term_tasks %}
     <div class="task">
-        <form method="POST" action="{{ url_for('deal_long_items') }}" >
+        <form method="POST" action="{{ url_for('deal_long_items') }}" id="long_up"  onsubmit="return submitNewItem('long_up')" >
             <p class="hd">长期项目
                 <button type="submit" class="btn">保存</button>
                 <button type="button" class="btn all_long_change_btn" >全部修改</button>
                 <button type="button"  class="btn all_long_cancel_btn" style="display: none">全部取消</button>
             </p>
             <p>没有开始就完成的项目会被删掉（代表该项目被删除）</p>
+            <p>若项目为学习内容，需要复习，需将"学习"一项打钩。学习完成后，会自动删除</p>
+            <p>若将项目加入"近期待办"，需要在"开始"一项打勾（同时必须设置起止日期）。若想在近期待办中删除，则取消打勾。</p>
             <table border="1">
                 <colgroup>
                     <col width="40" />
