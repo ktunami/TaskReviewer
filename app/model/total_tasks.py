@@ -12,6 +12,7 @@ class TotalTasks(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, unique=True)
     name = db.Column(db.String(200), unique=True)
+    last_learned = db.Column(db.String(200), unique=True)
     learned_times = db.Column(db.Integer, default=0)
     next_begin_time = db.Column(db.DATE)
     progress = db.Column(db.Integer, default=0)

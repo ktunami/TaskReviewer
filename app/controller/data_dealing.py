@@ -366,7 +366,8 @@ def update_db_by_new_stuff(ids):
         new_progress = total_to_be_updated.progress + total_line.progress
         TotalTasks.query.filter_by(
                 id=total_line.total_task_id).update({'progress': new_progress,
-                                                     'next_begin_time': total_line.today_date})
+                                                     'next_begin_time': total_line.today_date,
+						     'last_learned':total_line.name})
         db.session.commit()
         db.session.delete(total_line)
         db.session.commit()

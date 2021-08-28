@@ -21,6 +21,7 @@
             <tr>
                 <th>ID</th>
                 <th>名称</th>
+                <th>上次学到</th>
                 <th>已学次数</th>
                 <th>本次时间</th>
                 <th>进度(%)</th>
@@ -33,6 +34,7 @@
                     <input type="text" disabled name="name" value="{{ item.name }}">
                     <input type="hidden" name="id" value="{{ item.id }}">
                 </td>
+                <td>  {% if item.last_learned!=None %} {{ item.last_learned }} {% endif %} </td>
                 <td>{{ item.learned_times }}</td>
                 <td class="time" time="{{ item.next_begin_time }}">{{ item.next_begin_time }}</td>
                 <td>{{ item.progress }}</td>
