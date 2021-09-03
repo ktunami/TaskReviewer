@@ -115,6 +115,7 @@ $(function(){
 		renderDatePicker();
 		renderTimePicker();
 		renderMouseOver();
+		renderSelectChange();
 	})
 
 	renderAction();
@@ -123,6 +124,7 @@ $(function(){
 	renderCancelBtn();
 	renderDatePicker();
 	renderMouseOver();
+	renderSelectChange();
 })
 
 
@@ -206,6 +208,35 @@ function submitNew() {
     return flag;
 }
 
+function submitCheck(str) {
+    var flag = true;
+    var flag_money = true;
+    $("#"+str+" input[name='money']").each(function () {
+        if ($(this).val() == '') {
+            flag = false;
+        }
+    })
+
+    $("#"+str+" select").each(function (){
+       if ($(this).find("option:selected").val()=='') {
+            flag = false;
+        }
+    })
+
+    $("#"+str+" input[name='money']").each(function (){
+        if (isNaN($(this).val())) {
+            flag_money = false;
+        }
+    })
+    if (!flag) {
+        alert("每一项都不能为空")
+    }
+    if (!flag_money) {
+        alert("金额必须是数字")
+    }
+    return flag && flag_money;
+}
+
 
 function submitNewItem(str) {
     var flag1 = true;
@@ -275,6 +306,26 @@ function renderMouseOver(){
     })
 }
 
+function renderSelectChange(){
+    str = $('#shopping_categories').val()
+    dic = JSON.parse(str)
+    $('.main_category').each(function (){
+        $(this).change(function (){
+            cur_key = $(this).find("option:selected").val();
+            if (cur_key != '') {
+                arr = dic[cur_key]
+                html_str = '';
+                for (i=0; i < arr.length; ++i){
+                    html_str += "<option value='"+arr[i]+"'>"+arr[i]+"</option>"
+                }
+                $(this).parent().parent().find('.sub_select').html(html_str)
+            } else {
+                $(this).parent().parent().find('.sub_select').html('')
+            }
+        })
+    })
+}
+
 function renderAutoTextarea() {
     $.fn.autoHeight = function(){
         function autoHeight(elem){
@@ -305,3 +356,96 @@ function isLaterThanNow(time) {
         return false;
     }
 }
+
+
+function getSetList(arr) {
+    var arrry= [arr[0]];
+    for (var i = 1; i < arr.length; i++) {
+        if (arr[i] !== arr[i-1]) {
+            arrry.push(arr[i]);
+        }
+    }
+    return arrry;
+}
+
+$(document).ready(function() {
+    var str = $('#st_json').val();
+    if (str != '') {
+        var dic = JSON.parse(str);
+        var cate = new Array();
+        var month = new Array();
+        var money = new Array();
+        for (i=0; i<dic.length; ++i) {
+            var m = dic[i]['create_date']['qyear'] + "-" + dic[i]['create_date']['month']
+            month.push(m)
+            cate.push(dic[i]['category'])
+            money.push(dic[i]['money'])
+        }
+        cate_type = getSetList(cate);
+        month_type = getSetList(month);
+        datas = {};
+        var series =  [];
+        for (i = 0; i < cate_type.length; ++i) {
+            datas[cate_type[i]] = {};
+        }
+        for (i = 0; i < month.length; ++i) {
+            datas[cate[i]][month[i]] = money[i];
+        }
+        for (key in datas) {
+            ele = {};
+            ele['name'] = key;
+            ele['data'] = new Array();
+            for (i = 0; i < month_type.length; ++i) {
+                if (datas[key].hasOwnProperty(month_type[i])) {
+                    ele['data'].push(datas[key][month_type[i]])
+                } else {
+                    ele['data'].push(0)
+                }
+            }
+            series.push(ele);
+        }
+        console.log(series)
+        var title = {
+            text: '每月支出'
+        };
+        var subtitle = {
+            text: '来源: 额的血汗钱'
+        };
+        var xAxis = {
+            categories: month_type
+        };
+        var yAxis = {
+        title: {
+            text: '人民币 (单位：元)'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+        };
+
+        var tooltip = {
+            valueSuffix: '元'
+        }
+
+        var legend = {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        };
+
+        var json = {};
+
+        json.title = title;
+        json.subtitle = subtitle;
+        json.xAxis = xAxis;
+        json.yAxis = yAxis;
+        json.tooltip = tooltip;
+        json.legend = legend;
+        json.series = series;
+
+        $('#container').highcharts(json);
+    }
+});

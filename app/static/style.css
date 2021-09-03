@@ -39,11 +39,27 @@ h1 {
 	font-size:30px;
 	font-weight:bold;
 }
+
+.hd2 {
+	text-align:center;
+	font-size:15px;
+	font-weight:bold;
+}
+
 .f-left {
 	float:left;
 }
 .clr {
 	clear:both;
+}
+.vtop {
+	vertical-align: top;
+}
+.mr40 {
+	 margin-right: 40px !important;
+}
+.mt0 {
+	margin-top: 0px !important;
 }
 .all_links {
 	margin:20px auto 40px;

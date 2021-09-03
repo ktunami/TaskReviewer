@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+{% block title %} 待办事项 {% endblock %}
+{% block date %} 欢迎使用TaskReviewer，今天是 {{ date }} {{ week_day }} {% endblock %}
+
+{% block contents %}
+    <div class="task">
+        <form method="POST" id="f1" action="{{ url_for('add_shopping') }}" onsubmit="return submitCheck('f1')">
+        <input type="hidden" id='shopping_categories' value="{{ categories }}">
+        <input type="hidden" id='st_json' value="{{ st_json }}">
+        <p class="hd">说吧，又花啥钱了： <input type="submit" class="btn" value="提交"> </p>
+            <table border="1">
+                <colgroup>
+                    <col width="40" />
+                    <col width="80" />
+                    <col width="120" />
+                    <col width="220" />
+                    <col width="65" />
+                    <col width="100" />
+                    <col width="60" />
+                </colgroup>
+                <tr>
+                    <th>序号</th>
+                    <th>总分类</th>
+                    <th>子分类</th>
+                    <th>具体内容</th>
+                    <th>金额</th>
+                    <th>日期</th>
+                    <th></th>
+                </tr>
+                <tbody class="add_line">
+                    <tr>
+                        <td class="num"></td>
+                        <td>
+                            <select name="category" class="main_category">
+                                <option value="" ></option>
+                                {% for item in cate_list %}
+                                <option value="{{ item }}" >{{ item }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="sub_category"  class="sub_select">
+                            </select>
+                        </td>
+                        <td> <input type="text" class="ipt" name="content"> </td>
+                        <td> <input type="text" name="money"> </td>
+                        <td> <input name="date" class="ipt_date" /> </td>
+                        <td> <button type="button" class="btn btn-del">移除</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+		<script type="text/template" class="add_content">
+            <tr>
+                <td class="num"></td>
+                <td>
+                    <select name="category" class="main_category">
+                        <option value="" ></option>
+                        {% for item in cate_list %}
+                        <option value="{{ item }}" >{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select name="sub_category"  class="sub_select">
+                    </select>
+                </td>
+                <td> <input type="text" class="ipt" name="content"> </td>
+                <td> <input type="text" name="money"> </td>
+                <td> <input name="date" class="ipt_date" /> </td>
+                <td> <button type="button" class="btn btn-del">移除</button></td>
+            </tr>
+		</script>
+		<button type="button" class="btn btn-add mt5">+添加</button>
+    </div>
+
+    <div class="task">
+        <form method="POST" action="{{ url_for('all_expense') }}" >
+            <p class="hd">输入起止日期：</p>
+            <p>
+                开始日期： <input type="text" class="ipt_date" name="start_date"> &nbsp;&nbsp;
+                结束日期： <input type="text" class="ipt_date" name="end_date"> &nbsp;&nbsp;
+                <input type="submit" class="btn" value="提交">
+            </p>
+        </form>
+    </div>
+
+    {% if dates %}
+        <div class="task">
+              <p class="hd">从{{ dates[0] }}到{{ dates[1] }}期间的花费如下(共{{ all_money }}元)：</p>
+        </div>
+    {% endif %}
+
+    {% if shopping_items %}
+    <table>
+        <tr>
+            <td class="vtop">
+                <div class="task mr40 mt0">
+                    <p class="hd2">具体花费：</p>
+                    {{ shopping_items|safe }}
+                </div>
+            </td>
+            <td class="vtop">
+                <div class="task mr40 mt0">
+                    <p class="hd2">按大分类统计：</p>
+                    {{ main_cate|safe }}
+                </div>
+            </td>
+            <td  class="vtop">
+                <div class="task mt0">
+                    <p class="hd2">按小分类统计：</p>
+                    {{ sub_cate|safe }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div id="container">
+
+    </div>
+    {% endif %}
+
+
+
+{% endblock %}

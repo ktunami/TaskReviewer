@@ -7,6 +7,7 @@
 from flask import render_template, request, redirect, url_for
 from app.controller.data_dealing import *
 from app.model.long_term_items import LongTermItems
+import json
 import time
 
 
@@ -92,16 +93,17 @@ def my_tasks():
     wd = app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
     today_date = datetime.datetime.today().date()
     pre_dealing()
-    l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete==False).\
-        order_by(LongTermItems.already_begin.desc()).\
-        order_by(LongTermItems.done_times.asc()).\
-        order_by(LongTermItems.expected_end_time.asc()).\
+    l_term_tasks = LongTermItems.query.filter(LongTermItems.already_complete == False). \
+        order_by(LongTermItems.already_begin.desc()). \
+        order_by(LongTermItems.done_times.asc()). \
+        order_by(LongTermItems.expected_end_time.asc()). \
         order_by(LongTermItems.id.asc()).all()
-    s_term_data1 = RecentItems.query.filter(and_(RecentItems.already_complete==False, today_date >= RecentItems.create_date)
-        ).filter(RecentItems.expected_days < 0).\
+    s_term_data1 = RecentItems.query.filter(
+        and_(RecentItems.already_complete == False, today_date >= RecentItems.create_date)
+        ).filter(RecentItems.expected_days < 0). \
         order_by(RecentItems.start_time.asc()).all()
     s_term_data2 = RecentItems.query.filter(
-        RecentItems.already_complete==False).filter(RecentItems.expected_days >= 0).all()
+        RecentItems.already_complete == False).filter(RecentItems.expected_days >= 0).all()
     s_term_data2.sort(key=lambda item: item.create_date + datetime.timedelta(days=item.expected_days))
     s_term_data1.extend(s_term_data2)
     s_term_li = []
@@ -129,6 +131,47 @@ def already_done():
                                date=datetime.datetime.today().date(),
                                week_day=app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
                                )
+
+
+# TODO 1
+@app.route('/all_expense', methods=['GET', 'POST'])
+def all_expense():
+    cates = app.config.get('SHOPPING_CATEGORIES')
+    if request.method == 'GET':
+        return render_template('expense.html',
+                               shopping_items=None,
+                               main_cate=None,
+                               sub_cate=None,
+                               dates=None,
+                               all_money=None,
+                               st_json=None,
+                               categories=json.dumps(cates),
+                               cate_list=cates.keys(),
+                               date=datetime.datetime.today().date(),
+                               week_day=app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
+                               )
+    else:
+        result = request.form
+        items, main_cate, sub_cate, dates, all_money, st_json = get_shopping_items(result)
+        return render_template('expense.html',
+                               shopping_items=items,
+                               main_cate=main_cate,
+                               sub_cate=sub_cate,
+                               dates=dates,
+                               all_money=all_money,
+                               st_json=st_json,
+                               categories=json.dumps(cates),
+                               cate_list=cates.keys(),
+                               date=datetime.datetime.today().date(),
+                               week_day=app.config.get('WEEKDAYS_DISPLAY')[datetime.date.today().weekday()]
+                               )
+
+
+@app.route('/add_shopping', methods=['POST'])
+def add_shopping():
+    result = request.form
+    add_new_expense(result)
+    return redirect(url_for('all_expense'))
 
 
 @app.route('/deal_short_items', methods=['POST'])

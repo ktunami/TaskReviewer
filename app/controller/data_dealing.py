@@ -8,6 +8,7 @@
 from app import app, db
 from app.model.common_checks import *
 from app.model.daily_tasks import DailyTasks
+from app.model.expense import Expense
 from app.model.today_work import TodayWork
 from app.model.total_tasks import TotalTasks
 from app.model.long_term_items import LongTermItems
@@ -15,7 +16,8 @@ from app.model.recent_items import RecentItems
 from app.model.long_projects_done import LongProjectsDone
 from app.model.links_record import LinksRecord
 from app.model.tips_record import TipsRecord
-from sqlalchemy import and_
+from sqlalchemy import and_, func
+import pandas as pd
 
 
 def review_dealing(val):
@@ -31,6 +33,30 @@ def review_dealing(val):
     DailyTasks.query.filter_by(id=val).update({'learned_times': new_learned_times,
                                                'next_begin_time': new_next_begin_time})
     db.session.commit()
+
+
+def add_new_expense(result):
+    """
+    Add new expense
+    :param result: New expense
+    """
+    all_category = result.getlist("category")
+    all_sub_category = result.getlist("sub_category")
+    all_content = result.getlist("content")
+    all_money = result.getlist("money")
+    all_date = result.getlist("date")
+    li = []
+    for i in range(len(all_category)):
+        item = Expense(category=all_category[i],
+                       sub_category=all_sub_category[i],
+                       content=all_content[i],
+                       money=all_money[i],
+                       create_date=get_date(all_date[i]) if get_date(all_date[i])
+                       else datetime.datetime.today().date())
+        li.append(item)
+    if len(li):
+        db.session.add_all(li)
+        db.session.commit()
 
 
 def add_new_short_items(result, current_date):
@@ -105,6 +131,39 @@ def add_new_tips(result):
             li.append(LinksRecord(tip_id=tip.id, content=all_content[i], remarks=all_remarks[i]))
     db.session.add_all(li)
     db.session.commit()
+
+
+def shopping_statistical_analysis(items):
+    dict_li = [dict(item) for item in items]
+    df = pd.DataFrame(dict_li)
+    df[['money']] = df[['money']].astype(float)
+    df['create_date'] = pd.to_datetime(df['create_date'])
+    df_idx = df.set_index('create_date')
+    df_m = df_idx.to_period('M')
+    df_right = df_m.groupby(['create_date', 'category', 'sub_category']).sum()
+    df_left = df_m.groupby([u'create_date', u'category']).sum()
+    st_json = df_left.reset_index().to_json(orient='records')
+    return df.to_html(), df_left.to_html(), df_right.to_html(), df['money'].sum(), st_json
+
+
+def get_shopping_items(result):
+    """
+    Get all shopping items between start_date and end_date
+    :param result: start_date and end_date
+    :return: all shopping items between start_date and end_date, dates
+    """
+    start_date = get_date(result.getlist("start_date")[0])
+    end_date = get_date(result.getlist("end_date")[0])
+    oldest_date = db.session.query(func.min(Expense.create_date)).one()[0]
+    if not start_date:
+        start_date = oldest_date
+    if not end_date:
+        end_date = datetime.datetime.today().date()
+    dates = (start_date, end_date)
+    items = Expense.query.filter(and_(Expense.create_date >= start_date, Expense.create_date <= end_date)).all()
+    items.sort(key=lambda item: item.create_date)
+    all_case, main_cate, sub_cate, all_money, st_json = shopping_statistical_analysis(items)
+    return all_case, main_cate, sub_cate, dates, all_money, st_json
 
 
 def get_all_tips_and_links():
@@ -220,11 +279,11 @@ def update_new_short_items(result):
 
 def create_study_task(project_id, project_name):
     item = TotalTasks(
-            project_id=project_id,
-            name=project_name,
-            next_begin_time=datetime.datetime.today().date(),
-            progress=0,
-            create_time=datetime.datetime.today().date())
+        project_id=project_id,
+        name=project_name,
+        next_begin_time=datetime.datetime.today().date(),
+        progress=0,
+        create_time=datetime.datetime.today().date())
     db.session.add(item)
     db.session.commit()
 
@@ -243,7 +302,7 @@ def create_recent_periodic_task(tsk_id, name, content, remarks, start_date, cate
         content=content,
         is_content_link=check_is_url(content),
         remarks=remarks,
-        expected_days='-1',   #str((start_date - current_date).days + 1),
+        expected_days='-1',  # str((start_date - current_date).days + 1),
         create_date=start_date,
         start_time=st_time,
         end_time=e_time,
@@ -302,7 +361,7 @@ def update_long_items(result):
         if all_id[i] in all_start_checkbox:
             if int(all_id[i]) in short_id_list:
                 st_time, e_time = app.config.get('CATEGORIES')[all_categories[i]]
-                RecentItems.query.filter_by(long_tsk_id=int(all_id[i])).\
+                RecentItems.query.filter_by(long_tsk_id=int(all_id[i])). \
                     update({'name': get_task_name(all_id[i], all_name[i]),
                             'content': all_content[i],
                             'is_content_link': check_is_url(all_content[i]),
@@ -316,7 +375,7 @@ def update_long_items(result):
                     get_date(all_start_time[i]).date(),
                     all_categories[i])
         else:
-            line = RecentItems.query.filter(RecentItems.long_tsk_id==int(all_id[i])).first()
+            line = RecentItems.query.filter(RecentItems.long_tsk_id == int(all_id[i])).first()
             db.session.delete(line)
             db.session.commit()
     db.session.commit()
@@ -365,9 +424,9 @@ def update_db_by_new_stuff(ids):
         total_to_be_updated = TotalTasks.query.filter(TotalTasks.id == total_line.total_task_id).first()
         new_progress = total_to_be_updated.progress + total_line.progress
         TotalTasks.query.filter_by(
-                id=total_line.total_task_id).update({'progress': new_progress,
-                                                     'next_begin_time': total_line.today_date,
-						     'last_learned':total_line.name})
+            id=total_line.total_task_id).update({'progress': new_progress,
+                                                 'next_begin_time': total_line.today_date,
+                                                 'last_learned': total_line.name})
         db.session.commit()
         db.session.delete(total_line)
         db.session.commit()
