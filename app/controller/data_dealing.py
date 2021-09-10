@@ -277,11 +277,11 @@ def update_new_short_items(result):
     db.session.commit()
 
 
-def create_study_task(project_id, project_name):
+def create_study_task(project_id, project_name, start_time):
     item = TotalTasks(
         project_id=project_id,
         name=project_name,
-        next_begin_time=datetime.datetime.today().date(),
+        next_begin_time=get_date(start_time),
         progress=0,
         create_time=datetime.datetime.today().date())
     db.session.add(item)
@@ -354,9 +354,20 @@ def update_long_items(result):
         # Create or update study item
         if all_id[i] in all_add_to_study:
             if int(all_id[i]) in id_list:
-                TotalTasks.query.filter_by(id=int(all_id[i])).update({'name': all_name[i]})
+                if get_date(all_start_time[i]):
+                    TotalTasks.query.filter_by(id=int(all_id[i])).update({
+                        'name': all_name[i],
+                        'next_begin_time': get_date(all_start_time[i])})
+                else:
+                    TotalTasks.query.filter_by(id=int(all_id[i])).update({'name': all_name[i]})
             else:
-                create_study_task(all_id[i], all_name[i])
+                create_study_task(all_id[i], all_name[i], all_start_time[i])
+        else:
+            if int(all_id[i]) in id_list:
+                line = TotalTasks.query.filter(TotalTasks.id == int(all_id[i])).first()
+                db.session.delete(line)
+                db.session.commit()
+
         # Create or update periodic task
         if all_id[i] in all_start_checkbox:
             if int(all_id[i]) in short_id_list:
@@ -375,9 +386,10 @@ def update_long_items(result):
                     get_date(all_start_time[i]).date(),
                     all_categories[i])
         else:
-            line = RecentItems.query.filter(RecentItems.long_tsk_id == int(all_id[i])).first()
-            db.session.delete(line)
-            db.session.commit()
+            if int(all_id[i]) in short_id_list:
+                line = RecentItems.query.filter(RecentItems.long_tsk_id == int(all_id[i])).first()
+                db.session.delete(line)
+                db.session.commit()
     db.session.commit()
 
 
@@ -461,6 +473,10 @@ def pre_dealing():
             TotalTasks.query.filter_by(id=rec.id).update({'learned_times': learned_times,
                                                           'next_begin_time': next_date,
                                                           'progress': 0})
+            LongTermItems.query.filter_by(id=rec.id).update({
+                'expected_begin_time': next_date,
+                'expected_end_time': next_date
+            })
             db.session.commit()
     # Delete canceled projects
     canceled_projects = LongTermItems.query.filter(
