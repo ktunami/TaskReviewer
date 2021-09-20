@@ -26,6 +26,7 @@ def index():
     current_date = datetime.datetime.today().date()
     pre_dealing()
     all_tasks = TotalTasks.query.all()
+    all_tasks.sort(key=lambda item: item.learned_times)
     today_learned = TodayWork.query.all()
     for learn_item in today_learned:
         if learn_item.total_task_id:
