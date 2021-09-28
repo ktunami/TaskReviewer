@@ -448,6 +448,11 @@ def pre_dealing():
     """
     Data preprocessing
     """
+    # Update today work
+    TodayWork.query.update({
+        'today_date': datetime.datetime.today().date()
+    })
+
     # Total task and long items
     records = TotalTasks.query.filter(TotalTasks.progress >= 100).all()
     for rec in records:
