@@ -26,6 +26,8 @@ def index():
     current_date = datetime.datetime.today().date()
     pre_dealing()
     all_tasks = TotalTasks.query.all()
+    tmp = [item for item in all_tasks if item.next_begin_time <= current_date]
+    all_tasks = tmp
     all_tasks.sort(key=lambda item: item.learned_times)
     today_learned = TodayWork.query.all()
     for learn_item in today_learned:
@@ -214,6 +216,13 @@ def deal_tips():
     else:
         result = request.form
         update_tips(result)
+    return redirect(url_for('tips_page'))
+
+
+@app.route('/add_tips_task', methods=['POST', 'GET'])
+def add_tips_task():
+    tip_id = request.args.get("id")
+    add_tips_to_task(tip_id)
     return redirect(url_for('tips_page'))
 
 

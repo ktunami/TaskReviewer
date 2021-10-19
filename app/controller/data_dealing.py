@@ -184,6 +184,31 @@ def get_all_tips_and_links():
     return result
 
 
+def add_tips_to_task(tid):
+    items = LinksRecord.query.filter(LinksRecord.tip_id == int(tid)).all()
+    content = TipsRecord.query.filter(TipsRecord.id == int(tid)).first().instruction.split('_')
+    today = datetime.datetime.today().date()
+    if len(content) == 2:
+        li = []
+        remark = content[0]
+        days = int(content[1])
+        for item in items:
+            item = RecentItems(name=item.remarks,
+                               content=item.content,
+                               is_content_link=check_is_url(item.content),
+                               remarks=remark,
+                               expected_days=days,
+                               create_date=today,
+                               start_time=None,
+                               end_time=None)
+            li.append(item)
+        if len(li):
+            db.session.add_all(li)
+            db.session.commit()
+    else:
+        print('Should be xxx_num ')
+
+
 def update_tips(result):
     all_tip_ids = result.getlist("tip_id")
     all_link_ids = result.getlist("link_id")

@@ -132,6 +132,9 @@
                             </form>
                         </td>
                         <td style="vertical-align: top">
+                            <button type="button" class="btn add_item mb10"
+                                    onclick="submit_tip_task('form_{{ item[0].id }}','{{ url_for('add_tips_task') }}?id={{ item[0].id }}')"
+                                    data-href="{{ url_for('add_tips_task') }}?id={{ item[0].id }}">加任务</button>
                             <button type="button" class="btn change_btn mb10" >修改</button>
                             <button type="button" class="btn cancel_btn mb10" style="display: none">取消</button>
                             <button type="button" class="btn delete_btn mb10"

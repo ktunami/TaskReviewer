@@ -177,6 +177,11 @@ function submit_tip_change(form_id) {
     $('#'+form_id).submit();
 }
 
+function submit_tip_task(form_id, url) {
+    $('#'+form_id).attr('action',url)
+    $('#'+form_id).submit();
+}
+
 function renderAction() {
 	$('.btn-del').off('click').click(function(){
 		$(this).parent().parent().remove();
