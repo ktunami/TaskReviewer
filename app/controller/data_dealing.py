@@ -175,6 +175,7 @@ def get_all_tips_and_links():
     links = LinksRecord.query.all();
     result = []
     id_map = {}
+    tips = tips[::-1]
     for i in range(len(tips)):
         result.append([tips[i], []])
         id_map[tips[i].id] = i
